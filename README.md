@@ -39,7 +39,7 @@ The generated material could be used in lieu of workbooks, worksheets or other f
 
 Coding provides teachers and learners with the ability to create their own educational tools; to manipulate their own data; to fully reap the profits of their own intellectual work.
 
-To see the idea in practice, you might want to check out either the demo video or the Project Plan pdf at:
+To see the idea in practice, you might want to check out either the demo video or the Project Plan PDF at:
 
 # https://wierdest.itch.io/block-board
 
