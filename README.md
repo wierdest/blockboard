@@ -25,19 +25,21 @@ you can download a Linux or an Android build, or check out a WEBGL version at:
 To be a source for teachers or learners who would like to build the Unity project and modify or contribute to the project.
 
 One extremely interesting aspect of the project to me is the string generation process, in this code base handled by the conventionally named "Printer" class,
-available at blockboard/Scripts/Board/Printer.cs.
+available at 
+
+    blockboard/Scripts/Board/Printer.cs.
 
 The reason for that special interest is the fact that such a task is very much on the range of a beginner's scope, when it comes to programming. 
 
-So, a teacher or learner who might think about beginning to learn how to code has the chance of building something of immediate consequence to their teaching or learning process.
+So, a teacher, or learner, who might think about beginning to learn how to code has the chance of building something of immediate consequence to their teaching, or learning, process.
 
-The basic intent at the core of this project is that of creating a tool able to interactively display content and generate some text material impromptu. 
+The core intent of this project is creating a tool able to interactively display content and generate some text material impromptu. 
 
-The generated material could be used in lieau of workbooks, worksheets or other form of pre-arranged didatic practice. I believe this could result in a more flexible relationship between teachers, learners and the authoritative institutions that regulate the first two's relationship.
+The generated material could be used in lieu of workbooks, worksheets or other form of pre-arranged didatic practice. I believe this could result in a more flexible relationship between teachers, learners and the authoritative institutions that regulate the first two's relationship.
 
 Coding provides teachers and learners with the ability to create their own educational tools; to manipulate their own data; to fully reap the profits of their own intellectual work.
 
-To see the idea illustrated, you might want to check out either the demo videos or the Project Plan pdf at:
+To see the idea in practice, you might want to check out either the demo video or the Project Plan pdf at:
 
 # https://wierdest.itch.io/block-board
 
