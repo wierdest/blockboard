@@ -31,9 +31,9 @@ public class Shape : MonoBehaviour
 
     // Text
     [SerializeField] private TMPro.TMP_Text activeFaceText;
-    private string workingText;
     public List<string> ActiveTextSplit;
     private bool hasUpdatedActiveTextSplitForPyramid;
+    private readonly string contentIdString = " contains {0}...";
 
     // Color
     [SerializeField] private MeshRenderer meshRenderer;
@@ -260,8 +260,25 @@ public class Shape : MonoBehaviour
         Debug.LogFormat("Shape {0} has reset all faces to SAMPLE TEXT!", name);
     }
 
+    public string GetIdentifierTextContent()
+    {
+        
+        if(activeFaceText)
+        {
+            var str =  activeFaceText.text;
 
+            if(str.Equals("Sample text"))
+            {
+                return string.Format(contentIdString, "nothing");
+            }
 
+            var split = str.Split(" ");
+            return string.Format(contentIdString, split[0]);
+        }
+
+        return string.Format(contentIdString, "nothing");
+    }
+    
     #endregion
     
     #region COLOR

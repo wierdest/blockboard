@@ -37,7 +37,7 @@ public class ShapeManager : MonoBehaviour
 
     // monitoring status
     [SerializeField] private TMPro.TMP_Text statusText;
-    private readonly string statusTemplate = "selection: {0}\n duration: {1}";
+    private readonly string statusTemplate = "selection: {0}\nduration: {1}";
 
     
     private void Awake()
@@ -85,7 +85,7 @@ public class ShapeManager : MonoBehaviour
         // status monitor
         statusText.text = string.Format(
             statusTemplate,
-            lastSelectedShape == null ? "none" : lastSelectedShape.name,
+            lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
             selectionDuration == originalSelectionDuration ? "full" : selectionDuration
         );
     }
@@ -106,7 +106,7 @@ public class ShapeManager : MonoBehaviour
 
         if(!lastSelectedShape)
         {
-            return;
+            
             // var nonPieces = shapes.Where(s => s.IsPiece);
             // if(nonPieces.Count() > 0)
             // {
@@ -118,6 +118,8 @@ public class ShapeManager : MonoBehaviour
             //     s.Write(value);
             // }
             // return;
+
+            return;
         }
 
         lastSelectedShape.Write(value);
