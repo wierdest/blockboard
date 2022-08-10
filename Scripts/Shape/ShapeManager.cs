@@ -415,6 +415,10 @@ public class ShapeManager : MonoBehaviour
 
     private void addCatFormToCatManager()
     {
+        if(!lastSelectedShape)
+        {
+            return;
+        }
         var cat = lastSelectedShape.GetCatForm();
         catManager.AddCategory(cat);
         hasCatToGive = false;

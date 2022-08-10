@@ -6,10 +6,18 @@ using UnityEngine;
 public class CatManager : MonoBehaviour
 {
     [SerializeField] private List<Category> cats;
+    private int lastCatCount;
+    // monitoring status
+    [SerializeField] private TMPro.TMP_Text statusText;
+    private readonly string statusTemplate = "{0}; ";
+    private readonly string fullStatusTemplate = "to print: {0} and {1} more!";
+    private int maxStatusLength;
     
     private void Awake()
     {
         cats = new List<Category>();
+        maxStatusLength = statusText.text.Length;
+        statusText.text = "to print: ";
     }
 
     public void AddCategory(Category newCat)
@@ -42,7 +50,10 @@ public class CatManager : MonoBehaviour
             return;
 
         }
+
         cats.Add(newCat);
+        updateStatusMonitor();
+        lastCatCount++;
         Debug.LogFormat("Cat Manager: added cat {0} exemplified by {1}", newCat.name, newCat.examples);
         
     }
@@ -53,11 +64,13 @@ public class CatManager : MonoBehaviour
         {
             Debug.Log("Cat Manager: I can't remove a null cat! Sorry!");
         }
-        var lastCatCount = cats.Count;
+
         if(cats.Remove(cat))
         {
             Debug.LogFormat("Cat Manager: removed a cat! we used to have {0} cat, now there's {1}!", lastCatCount, cats.Count);
         }
+        lastCatCount = cats.Count;
+        updateStatusMonitor();
     }
 
 
@@ -70,6 +83,34 @@ public class CatManager : MonoBehaviour
     {
         return cats;
     }
+
+    private void updateStatusMonitor()
+    {
+        if(statusText.text.Length >= maxStatusLength)
+        {
+            statusText.text = string.Format(
+                fullStatusTemplate,
+                cats[0].name,
+                cats.Count + 1
+            );
+        }
+        else
+        {
+            statusText.text = "to print: ";
+            foreach(Category cat in cats)
+            {
+                statusText.text += string.Concat(
+                    string.Format(
+                        statusTemplate,
+                        cat.name
+                    )
+                ); 
+            }
+            
+        }
+    }
+
+   
 
 }
   

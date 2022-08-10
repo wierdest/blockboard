@@ -278,7 +278,7 @@ public class Shape : MonoBehaviour
 
         return string.Format(contentIdString, "nothing");
     }
-    
+
     #endregion
     
     #region COLOR
@@ -438,7 +438,7 @@ public class Shape : MonoBehaviour
     public void RemoveCatForm()
     {
         catForm = null;
-        Debug.LogFormat("Shape {0} removed its cat form!");
+        // Debug.LogFormat("Shape {0} removed its cat form!");
     }
 
 
