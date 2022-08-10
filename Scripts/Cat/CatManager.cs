@@ -63,14 +63,17 @@ public class CatManager : MonoBehaviour
         if(cat == null)
         {
             Debug.Log("Cat Manager: I can't remove a null cat! Sorry!");
+            return;
         }
 
-        if(cats.Remove(cat))
+        if(cats.RemoveAll(c => c.Equals(cat)) != 0)
         {
+            // cats = cats.Where(c => !c.Equals(cat)).ToList<Category>();
             Debug.LogFormat("Cat Manager: removed a cat! we used to have {0} cat, now there's {1}!", lastCatCount, cats.Count);
+            updateStatusMonitor();
         }
         lastCatCount = cats.Count;
-        updateStatusMonitor();
+        
     }
 
 

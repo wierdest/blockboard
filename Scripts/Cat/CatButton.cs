@@ -55,8 +55,9 @@ public class CatButton : MonoBehaviour
             Debug.Log("CatButton: Long click!");
             // remove category
             shapeManager.RemoveLastSelectedShapeCategory();
+            return;
         }
-        Debug.Log("Cat click!");
+        Debug.Log("CatButton: Short click!");
         // make & add category 
         shapeManager.MakeLastSelectedShapeCatForm();
         // color the cat & the color picker with the active face's color
