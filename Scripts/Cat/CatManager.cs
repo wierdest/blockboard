@@ -76,6 +76,10 @@ public class CatManager : MonoBehaviour
         
     }
 
+    public void ClearCats()
+    {
+        cats.Clear();
+    }
 
     public int GetCatsCount()
     {
