@@ -44,6 +44,7 @@ public class CatButton : MonoBehaviour
                     longClick = true;
                     clickDurationCount = 0f;
                 }
+                
             }
         }
     }
@@ -55,6 +56,7 @@ public class CatButton : MonoBehaviour
             Debug.Log("CatButton: Long click!");
             // remove category
             shapeManager.RemoveLastSelectedShapeCategory();
+            longClick = false;
             return;
         }
         Debug.Log("CatButton: Short click!");
