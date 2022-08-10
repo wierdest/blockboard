@@ -9,6 +9,7 @@ public class CatManager : MonoBehaviour
     private int lastCatCount;
     // monitoring status
     [SerializeField] private TMPro.TMP_Text statusText;
+    private readonly string emptyStatus = "nothing to print yet!";
     private readonly string statusTemplate = "{0}; ";
     private readonly string fullStatusTemplate = "to print: {0} and {1} more!";
     private int maxStatusLength;
@@ -17,7 +18,7 @@ public class CatManager : MonoBehaviour
     {
         cats = new List<Category>();
         maxStatusLength = statusText.text.Length;
-        statusText.text = "to print: ";
+        statusText.text = emptyStatus;
     }
 
     public void AddCategory(Category newCat)
@@ -79,6 +80,7 @@ public class CatManager : MonoBehaviour
     public void ClearCats()
     {
         cats.Clear();
+        updateStatusMonitor();
     }
 
     public int GetCatsCount()
@@ -93,6 +95,12 @@ public class CatManager : MonoBehaviour
 
     private void updateStatusMonitor()
     {
+        if(cats.Count == 0)
+        {
+            statusText.text = emptyStatus;
+            return;
+        }
+
         if(statusText.text.Length >= maxStatusLength)
         {
             statusText.text = string.Format(
