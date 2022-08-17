@@ -206,13 +206,25 @@ public class ShapeManager : MonoBehaviour
         cameraController.PushCameraOut(3f);
         instatiateShapeOnClick((int)ShapeType.Cube);
     }
+
     public void OnClickRemoveButton()
+    {
+        foreach(Shape s in shapes)
+        {
+            Destroy(s.gameObject);
+        }
+
+        lastSelectedShape = null;
+        shapes.Clear();
+    }
+    public void OnClickUndoButton()
     {
         if(shapes.Count <= 0)
         {
             // Debug.Log("Shape Manager: nothing to remove, honey!");
             return;
         }
+
         // default behaviour is to remove last to first
         // if we have a shape selected, we remove that one instead
         if(lastSelectedShape)
@@ -367,22 +379,42 @@ public class ShapeManager : MonoBehaviour
 
     private void hideAllButSelected()
     {
-        foreach(Shape s in shapes.Where(
-            s => !s.IsPiece && !s.Equals(lastSelectedShape) && !s.IsSplit)
-        )
+        if(lastSelectedShape)
         {
-            if(!s.IsHidden)
+            foreach(Shape s in shapes.Where(
+            s => !s.IsPiece && !s.Equals(lastSelectedShape) && !s.IsSplit)
+            )
             {
-                var pos = s.transform.position;
-                var destination = new Vector3(
-                    pos.x,
-                    pos.y + (Random.Range(-1f, 1f) > 0f ? 40f : -40f),
-                    pos.z
-                );
-                s.Move(destination, 4f);
-                s.IsHidden = true;
+                if(!s.IsHidden)
+                {
+                    var pos = s.transform.position;
+                    var destination = new Vector3(
+                        pos.x,
+                        pos.y + (Random.Range(-1f, 1f) > 0f ? 40f : -40f),
+                        pos.z
+                    );
+                    s.Move(destination, 4f);
+                    s.IsHidden = true;
+                }
             }
+
         }
+        // foreach(Shape s in shapes.Where(
+        //     s => !s.IsPiece && !s.Equals(lastSelectedShape) && !s.IsSplit)
+        // )
+        // {
+        //     if(!s.IsHidden)
+        //     {
+        //         var pos = s.transform.position;
+        //         var destination = new Vector3(
+        //             pos.x,
+        //             pos.y + (Random.Range(-1f, 1f) > 0f ? 40f : -40f),
+        //             pos.z
+        //         );
+        //         s.Move(destination, 4f);
+        //         s.IsHidden = true;
+        //     }
+        // }
     }
 
     private void bringAllFromHiding()
