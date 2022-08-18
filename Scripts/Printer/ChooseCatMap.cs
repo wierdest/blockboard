@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -16,8 +17,10 @@ public static class ChooseCatMapLiterals
     public static string NoColorCatItem = "\n| | | | {0} | \n {1}"; // ignores the color aspect
     public static string CatItemExample = "| | {0} | |\n";
     public static string ChoosingMapHeader = "Here's your {0} content as a multiple choice activity!\n\n";
-    public static string ContentBlockItem = " | </{0}/> | ";
+    public static string NormalBlockItem = " | {0} | ";
+    public static string ChooseContentBlockItem = " | </{0}/> | ";
     public static string ContentBlockItemChoice = "/ {0} /";
+
     
 }
 public class ChooseCatMap : Printer
@@ -26,11 +29,52 @@ public class ChooseCatMap : Printer
 
     public override string BuildInstructionString()
     {
-        return "";
+        return string.Format(
+            PrinterLiterals.InstructionsTemplate,
+            ChooseCatMapLiterals.TargetContent,
+            ChooseCatMapLiterals.Instructions
+        );
     }
     public override string BuildPreviewString()
     {
-        return "";
+        return string.Concat(
+            PrinterLiterals.PreviewHeader,
+            ChooseCatMapLiterals.ChooseCatMapHeader,
+            string.Format(
+                ChooseCatMapLiterals.NoColorCatItem,
+                "preview category",
+                string.Format(
+                    ChooseCatMapLiterals.CatItemExample,
+                    "preview example of preview category"
+                )
+            ),
+            "\n\n",
+
+            string.Format(
+                ChooseCatMapLiterals.ChoosingMapHeader,
+                "PREVIEW CATEGORY NAME"
+            ),
+            string.Concat(
+
+                string.Format(
+                    ChooseCatMapLiterals.NormalBlockItem,
+                    "I"
+                ),
+                string.Format(
+                    ChooseCatMapLiterals.ChooseContentBlockItem,
+                    string.Concat(
+                        string.Format(ChooseCatMapLiterals.ContentBlockItemChoice, "is"),
+                        string.Format(ChooseCatMapLiterals.ContentBlockItemChoice, "am"),
+                        string.Format(ChooseCatMapLiterals.ContentBlockItemChoice, "are")
+                    )
+
+                ),
+                string.Format(
+                    ChooseCatMapLiterals.NormalBlockItem,
+                    "a multiple choice preview"
+                )
+            )
+        );
     }
 
     public override void OnClickPrintButton()
@@ -40,8 +84,24 @@ public class ChooseCatMap : Printer
 
         if(CatManager.GetCatsCount() > 0)
         {
+            Debug.Log(ChooseCatMapLiterals.PrintChooseCatMapMessage);
+            printCategoryMap();
+            printChoosingMap();
 
         }
+
+        fullStringToPrint = "";
+        fullStringToPrint = string.Concat(
+            fullStringToPrint,
+            categoryMapString,
+            "\n\n\n",
+            PrinterLiterals.CreateLine(400),
+            "\n\n\n",
+            choosingMapString
+        );
+    
+        fullStringToPrint.CopyMeToClipboard();
+        Debug.Log(PrinterLiterals.TestMessage);
 
     }
     private void printCategoryMap()
@@ -57,17 +117,16 @@ public class ChooseCatMap : Printer
 
             foreach(string example in cat.examples)
             {
-                var str = string.Format(
+                var itemExample = string.Format(
                     ChooseCatMapLiterals.CatItemExample,
                     example
                 );
 
                 mapItemExamplesString = string.Concat(
                     mapItemExamplesString,
-                    str
+                    itemExample
                 );
             }
-
             var mapItem = string.Format(
                 ChooseCatMapLiterals.NoColorCatItem,
                 cat.name.ToUpperInvariant(),
@@ -95,6 +154,67 @@ public class ChooseCatMap : Printer
                 cat.name.ToUpperInvariant()
             )
         );
+        
+        foreach(string example in cat.examples)
+        {
+            var split  = example.Split(" ");
+            foreach(string block in split)
+            {
+                string blockString = "";
+                IEnumerable<Category> testArray = CatManager.GetCats().Where(c => c.examples.Contains<string>(block));
+                if(testArray.Count() != 0)
+                {
+                    // if the word in the example is a category
+                    Category catToChoose = testArray.First(); // we take the first we find
+                    // get the options we have to choose from
+                    List<string> optionsToChoose = catToChoose.examples;
+                    // randomly shuffles them
+                    optionsToChoose.Shuffle();
+                    string optionString = "";
+                    foreach(string option in optionsToChoose)
+                    {
+                        optionString = string.Concat(
+                            optionString,
+                            string.Format(
+                                ChooseCatMapLiterals.ContentBlockItemChoice,
+                                option
+                            )
+                        );
+                    }
+
+                    blockString = string.Format(
+                        ChooseCatMapLiterals.ChooseContentBlockItem,
+                        optionString
+                    );
+                }
+                else
+                {
+                    // normal word
+                    blockString = string.Format(
+                        ChooseCatMapLiterals.NormalBlockItem,
+                        block
+                    );
+                }
+
+                // this will come up sometime: the category
+
+                if(PrinterLiterals.LineBreaks.Contains(block.Last<char>()))
+                {
+                    blockString = string.Concat(
+                        blockString,
+                        "\n\n"
+                    );
+                }
+                
+                choosingMapString = string.Concat(
+                    choosingMapString,
+                    blockString
+                );
+
+
+            }
+
+        }
 
         
 

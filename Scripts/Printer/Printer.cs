@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -6,6 +7,16 @@ public static class PrinterLiterals
     public static string TestMessage = " | | | Printer working fine, boss! | | | ";
     public static string InstructionsTemplate = "Target content:\n\n{0}\nInstructions:\n\n{1}\n";
     public static string PreviewHeader = "Preview:\n\n";
+    public static List<char> LineBreaks = new List<char>() { '.', '?', '!'};
+    public static string CreateLine(int length)
+    {
+        string line = "";
+        for(int i = 0; i < length; i++)
+        {
+            line += "_";
+        }
+        return line;
+    }
 
 }
 

@@ -392,21 +392,30 @@ public class Shape : MonoBehaviour
         catForm.color = GetCurrentFaceColor();
         catForm.examples = new List<string>();
 
-        // make cat examples out of pyramid
+        // make cat examples out of pyramid ( really??? )
 
         if(Type == ShapeType.Pyramid)
         {
             if(strIsOkForCat(catName, faceTexts[1].text))
             {
                 catForm.examples.Add(faceTexts[1].text);
-                return;
+                
             }
             if(strIsOkForCat(catName, faceTexts[3].text))
             {
                 catForm.examples.Add(faceTexts[3].text);
-                return;
+                
             }
-            catForm.examples.Add(string.Concat(faceTexts[2].text, faceTexts[0].text));
+            if(strIsOkForCat(catName, faceTexts[2].text))
+            {
+                catForm.examples.Add(faceTexts[2].text);
+                
+            }
+            if(strIsOkForCat(catName, faceTexts[0].text))
+            {
+                catForm.examples.Add(faceTexts[0].text);
+                
+            }
             return;
         }
 

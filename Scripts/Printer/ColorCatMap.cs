@@ -17,17 +17,8 @@ public static class ColorCatMapLiterals
     public static string CatItem = "\n| {0} | {1} | \n {2}";
     public static string CatItemExample = "| | {0} | |\n";
     public static string ContentBlockItem = " | {0} | ";
-    public static List<char> LineBreaks = new List<char>() { '.', '?', '!'};
-    public static string CreateLine(int length)
-    {
-        string line = "";
-        for(int i = 0; i < length; i++)
-        {
-            line += "_";
-        }
-        return line;
-    }
-
+   
+  
 }
 
 public class ColorCatMap : Printer
@@ -89,7 +80,7 @@ public class ColorCatMap : Printer
             fullStringToPrint,
             categoryMapString,
             "\n\n\n",
-            ColorCatMapLiterals.CreateLine(400),
+            PrinterLiterals.CreateLine(400),
             "\n\n\n",
             coloringMapString
         );
@@ -123,7 +114,7 @@ public class ColorCatMap : Printer
                     word
                 );
 
-                if(ColorCatMapLiterals.LineBreaks.Contains(word.Last<char>()))
+                if(PrinterLiterals.LineBreaks.Contains(word.Last<char>()))
                 {
                     wordMapItemToColor = string.Concat(wordMapItemToColor, "\n\n");
                 }
@@ -132,13 +123,15 @@ public class ColorCatMap : Printer
                     splitString,
                     wordMapItemToColor
                 );
-                
+
             }
 
             coloringMapString = string.Concat(
                 coloringMapString,
                 splitString
             );
+
+
         }
     }
 

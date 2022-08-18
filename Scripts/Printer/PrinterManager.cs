@@ -80,6 +80,7 @@ public class PrinterManager : MonoBehaviour
     {
         // sets the click listener programmatically 
         printButton.onClick.AddListener(currentPrinter.OnClickPrintButton);
+        Debug.Log("Tried updating printButton on click!");
     }
 
     private void updateDropdownOptions()
