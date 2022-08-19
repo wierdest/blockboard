@@ -246,13 +246,13 @@ public class ShapeManager : MonoBehaviour
         Destroy(last.gameObject);
 
         // clear all cats if there's no more shapes left
-        if(shapes.Count <= 0)
-        {
-            if(catManager.GetCatsCount() > 0)
-            {
-                catManager.ClearCats();
-            }
-        }
+        // if(shapes.Count <= 0)
+        // {
+        //     if(catManager.GetCatsCount() > 0)
+        //     {
+        //         catManager.ClearCats();
+        //     }
+        // }
     }
 
     private void removeRootCloud()
