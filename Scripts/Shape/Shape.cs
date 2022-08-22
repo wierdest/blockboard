@@ -63,6 +63,7 @@ public class Shape : MonoBehaviour
         ActiveTextSplit = new List<string>();
         catForm = new Category();
         catForm.examples  = new List<string>();
+        nexus = GetComponent<Nexus>();
     }
 
     public void Rotate()
@@ -360,8 +361,32 @@ public class Shape : MonoBehaviour
                 // Debug.LogFormat("Shape: {0} is free from root cloud {1}", name, testRoot.name);
             }
         }
-      
     }
+
+    public void AddNexus(GameObject root)
+    {
+        if(root == null)
+        {
+            Debug.Log("ROOT TO ADD IS NULL!");
+            return;
+        }
+        if(nexus.Root == null)
+        {
+            Debug.Log("ROOT TO ADD IS NULL!");
+            nexus.Root = new GameObject();
+            
+        }
+        nexus.Root = root;
+        nexus.Activate();
+    }
+
+
+
+    public bool HasNexus()
+    {
+        return nexus != null && nexus.Root != null;
+    }
+
     #endregion
 
     #region CAT

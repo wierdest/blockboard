@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShapeManager : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class ShapeManager : MonoBehaviour
     [SerializeField] private Shape lastSelectedShape;
     [SerializeField] private float selectionDuration;
     private float originalSelectionDuration;
+    public bool HasShape;
 
     // modifying (user interface elements to connect)
     [SerializeField] private TMPro.TMP_InputField inputField;
@@ -38,6 +40,7 @@ public class ShapeManager : MonoBehaviour
     // monitoring status
     [SerializeField] private TMPro.TMP_Text statusText;
     private readonly string statusTemplate = "selection: {0}\nduration: {1}";
+
 
     
     private void Awake()
@@ -81,7 +84,11 @@ public class ShapeManager : MonoBehaviour
             {
                 addCatFormToCatManager();
             }
+
         }
+
+        HasShape = lastSelectedShape != null;
+
         // status monitor
         statusText.text = string.Format(
             statusTemplate,
@@ -173,7 +180,7 @@ public class ShapeManager : MonoBehaviour
     #endregion
 
     // the third step is to connect the add shapes buttons and the remove button as well
-    #region  ADD & REMOVE SHAPES
+    #region ADD & REMOVE SHAPES
     
     // in order to add shapes, we need to instantiate them, obvs
     private void instatiateShapeOnClick(int prefabIndex)
@@ -231,7 +238,7 @@ public class ShapeManager : MonoBehaviour
         {
             if(lastSelectedShape.IsSplit)
             {
-                removeRootCloud();
+                removeAllNexusToSelectedPiece();
             }
             shapes.Remove(lastSelectedShape);
             Destroy(lastSelectedShape.gameObject);
@@ -255,16 +262,6 @@ public class ShapeManager : MonoBehaviour
         // }
     }
 
-    private void removeRootCloud()
-    {
-        foreach(Shape s in shapes)
-        {
-            if(s.IsPiece && lastSelectedShape)
-            {
-                s.RemoveRootCloud(lastSelectedShape.gameObject);
-            }
-        }
-    }
     #endregion
     
     // the fourth step is to implement the break-shape-into-pieces functionality
@@ -289,7 +286,7 @@ public class ShapeManager : MonoBehaviour
             return;
         }
 
-        hideAllButSelected();
+        // hideAllButSelected();
 
         // grid positioning variables to instantiate the chip shape
 
@@ -492,4 +489,71 @@ public class ShapeManager : MonoBehaviour
     #endregion
 
 
+    // the sixth step is to be able to edit the connection between shapes, the NEXUS
+    #region NEXUS
+
+    private void removeAllNexusToSelectedPiece()
+    {
+        foreach(Shape s in shapes)
+        {
+            if(s.IsPiece && lastSelectedShape)
+            {
+                s.RemoveRootCloud(lastSelectedShape.gameObject);
+            }
+        }
+    }
+
+    public bool LastSelectedShapeHasNexus()
+    {
+        return lastSelectedShape != null && lastSelectedShape.HasNexus();
+    }
+
+    public void RemoveLastSelectedShapeNexus()
+    {
+        lastSelectedShape.RemoveRootCloud();
+    }
+
+    public void OnClickNexusButton()
+    {
+        if(!lastSelectedShape)
+        {
+            // just to be safe, if we don't have a last selected shape,
+            // the nexus button hides itself
+            return;
+        }
+
+        if(lastSelectedShape.HasNexus())
+        {
+            lastSelectedShape.RemoveRootCloud();
+            
+            return;
+        }
+        // lastSelected Shape has no nexus
+        
+        // test if it's the only one:
+
+        if(shapes.Count <= 1)
+        {
+            // make the magnet button disappear: already taken care of by its own button script
+            return;
+        }
+        
+        // we automatically add the lastSelectedShape's nexus to the previous shape in the shapes array
+        // i.e.: previous shape is root for selected shape
+        // so, we need to test if it's the first item in the list.
+        int selectedIndex = shapes.FindIndex(0, shapes.Count(), s => s.Equals(lastSelectedShape));
+        if(selectedIndex == 0)
+        {
+            return;
+        }
+        // if it's not we're in the clear to add a nexus
+        lastSelectedShape.AddNexus(shapes[selectedIndex - 1].gameObject);
+        
+
+        
+    }
+
+
+
+    #endregion
 }

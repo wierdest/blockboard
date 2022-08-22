@@ -31,10 +31,9 @@ public class Nexus : MonoBehaviour
     {
         if(Root && isOn)
         {
-            
             transform.position = Vector3.MoveTowards(transform.position, Root.transform.position + offset, speed * Time.deltaTime);
         }
     }
 
-
+    
 }

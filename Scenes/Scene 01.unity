@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.50569856, g: 0.55416155, b: 0.57998276, a: 1}
+  m_IndirectSpecularColor: {r: 0.5057753, g: 0.554127, b: 0.5800447, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5195,8 +5195,9 @@ GameObject:
   - component: {fileID: 1566413290}
   - component: {fileID: 1566413289}
   - component: {fileID: 1566413288}
+  - component: {fileID: 1566413291}
   m_Layer: 5
-  m_Name: Magnet Button
+  m_Name: Nexus Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5268,7 +5269,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 484921828}
         m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
-        m_MethodName: OnClickSplitButton
+        m_MethodName: OnClickNexusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5316,6 +5317,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1566413286}
   m_CullTransparentMesh: 1
+--- !u!114 &1566413291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566413286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01fbb9b4b82a5d081a8d41e03e8b0c50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  off: {fileID: 21300000, guid: d891aec9cb8a5f53389d0353b0d59b7a, type: 3}
+  on: {fileID: 21300000, guid: 5967171d806e8c19d9b9c26d9b8a5a5d, type: 3}
+  buttonImage: {fileID: 1566413289}
+  shapeManager: {fileID: 484921828}
 --- !u!1 &1679664443
 GameObject:
   m_ObjectHideFlags: 0
@@ -5823,7 +5840,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "selection: {0}\nduration:  {1}\n "
+  m_text: 'selection: {0}
+
+    duration:  {1}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
