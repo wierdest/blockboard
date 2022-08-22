@@ -7,7 +7,7 @@ public static class ColorCatMapLiterals
 {
     public static string Instructions = 
     
-    "Add Target Content before exposition.\n" +  
+    "Add Target Content after exposition.\n" +  
     "It is worth exploring as many categories as the group can handle.\n" + 
     "Build mnemonic bridge between Color and Category.\n";
     public static string TargetContent = "A few sentences or short paragraph\n";
@@ -94,7 +94,7 @@ public class ColorCatMap : Printer
     {
         // takes the first category, 
         // assuming it contains a list of sentences in the examples
-        Category cat = CatManager.GetCats()[0];
+        Category cat = CatManager.GetCats()[CatManager.GetCatsCount() - 1];
         coloringMapString = string.Concat(
             coloringMapString,
             string.Format(
