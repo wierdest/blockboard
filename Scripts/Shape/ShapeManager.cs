@@ -61,7 +61,7 @@ public class ShapeManager : MonoBehaviour
         {
             lastSelectedShape = shapes.First(s => s.Equals(ClickAndDrag.Instance.CurrentShape));
             selectionDuration = originalSelectionDuration;
-            hideAllButSelected();
+            // hideAllButSelected();
             return;
         }
 
