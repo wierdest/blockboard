@@ -15,7 +15,6 @@ public class LayoutFixerForAndroid : MonoBehaviour
         // if it's android add an amount
         if(Application.platform == RuntimePlatform.Android)
         {
-            //
             topLeft.padding.left = padding;
             topRight.padding.right = padding;
             bottomLeft.padding.left = padding;
