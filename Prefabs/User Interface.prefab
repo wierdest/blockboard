@@ -4129,6 +4129,7 @@ GameObject:
   - component: {fileID: 7497533587110311755}
   - component: {fileID: 7497533587110311754}
   - component: {fileID: 7497533587110311765}
+  - component: {fileID: -8965475712408877482}
   m_Layer: 5
   m_Name: User Interface
   m_TagString: Untagged
@@ -4174,7 +4175,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -4200,7 +4201,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.25
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -4223,6 +4224,23 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &-8965475712408877482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7497533587110311764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7108a17de033036b4bda8a7e5f747e28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topLeft: {fileID: 7497533587267118703}
+  topRight: {fileID: 7497533586045311945}
+  bottomRight: {fileID: 7497533587150851185}
+  bottomLeft: {fileID: 7497533587353730901}
+  padding: 30
 --- !u!1 &7497533587121513768
 GameObject:
   m_ObjectHideFlags: 0
@@ -4343,7 +4361,7 @@ GameObject:
   - component: {fileID: 7497533587150851184}
   - component: {fileID: 7497533587150851185}
   m_Layer: 5
-  m_Name: Bottom Left Controls
+  m_Name: Bottom Right Controls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4369,7 +4387,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -10, y: 0}
+  m_AnchoredPosition: {x: -5, y: 5}
   m_SizeDelta: {x: 160, y: 240}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &7497533587150851185
@@ -4389,7 +4407,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 5
+  m_ChildAlignment: 8
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -4687,7 +4705,7 @@ GameObject:
   - component: {fileID: 7497533587353730890}
   - component: {fileID: 7497533587353730901}
   m_Layer: 5
-  m_Name: Bottom Right Controls
+  m_Name: Bottom Left Controls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
