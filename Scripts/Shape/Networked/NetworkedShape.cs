@@ -1,14 +1,9 @@
+using Fusion;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum ShapeType
-{
-    Sphere,
-    Pyramid,
-    Cube
-}
-public class Shape : MonoBehaviour
+public class NetworkedShape : NetworkBehaviour
 {
     public ShapeType Type;
 
@@ -42,13 +37,13 @@ public class Shape : MonoBehaviour
     [SerializeField] private Vector3 destination, posBeforeMove;
     [SerializeField] private float moveSpeed;
     private float originalMoveSpeed;
-    private Hover hover;
+    private NetworkedHover hover;
 
     // Control states
     public bool IsHidden, IsSplit, IsPiece;
 
     // Nexus: connection between shapes
-    private Nexus nexus;
+    private NetworkedNexus nexus;
 
     // Cat
     [SerializeField] private Category catForm;
@@ -57,12 +52,12 @@ public class Shape : MonoBehaviour
     {
         originalRotation = transform.rotation;
         activeFaceText = Type == ShapeType.Pyramid ? null : faceTexts[activeFaceRotationIndex];
-        hover = GetComponent<Hover>();
+        hover = GetComponent<NetworkedHover>();
         originalMoveSpeed = moveSpeed;
         ActiveTextSplit = new List<string>();
         catForm = new Category();
         catForm.examples  = new List<string>();
-        nexus = GetComponent<Nexus>();
+        nexus = GetComponent<NetworkedNexus>();
     }
 
     public void Rotate()
@@ -114,7 +109,7 @@ public class Shape : MonoBehaviour
         moveSpeed *= 10f;
     }
 
-    private void Update()
+    public override void FixedUpdateNetwork()
     {
         if(rotate)
         {
@@ -123,7 +118,7 @@ public class Shape : MonoBehaviour
                 rotate = false;
                 return;
             }
-            transform.Rotate((rotateBottomOrTop ? (Type != ShapeType.Cube ? Vector3.forward : Vector3.right)  :  Vector3.up) * (rotationSpeed * Time.deltaTime));
+            transform.Rotate((rotateBottomOrTop ? (Type != ShapeType.Cube ? Vector3.forward : Vector3.right)  :  Vector3.up) * (rotationSpeed * Runner.DeltaTime));
         } 
 
         if(move)
@@ -134,7 +129,7 @@ public class Shape : MonoBehaviour
                 moveSpeed = originalMoveSpeed;
                 hover.enabled = true;
             }
-            transform.position = Vector3.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, destination, moveSpeed * Runner.DeltaTime);
         }
     }
 
@@ -338,7 +333,7 @@ public class Shape : MonoBehaviour
     #region NEXUS
     public void RemoveRootCloud()
     {
-        if(TryGetComponent<Nexus>(out nexus))
+        if(TryGetComponent<NetworkedNexus>(out nexus))
         {
             nexus.Deactivate();
             nexus.Root = null;
@@ -347,7 +342,7 @@ public class Shape : MonoBehaviour
 
     public void RemoveRootCloud(GameObject testRoot)
     {
-        if(TryGetComponent<Nexus>(out nexus))
+        if(TryGetComponent<NetworkedNexus>(out nexus))
         {
             if(!nexus.Root)
             {

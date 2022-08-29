@@ -76,7 +76,7 @@ public class ShapeManager : MonoBehaviour
                 // forget about shape
                 lastSelectedShape = null;
                 selectionDuration = originalSelectionDuration;
-                bringAllFromHiding();
+                // bringAllFromHiding();
                 
             }
 
@@ -244,7 +244,7 @@ public class ShapeManager : MonoBehaviour
             Destroy(lastSelectedShape.gameObject);
             lastSelectedShape = null;
             selectionDuration = originalSelectionDuration;
-            bringAllFromHiding();
+            // bringAllFromHiding();
             return;
         }
 
@@ -372,6 +372,7 @@ public class ShapeManager : MonoBehaviour
     #endregion
 
     // because we split and select a particular shape we need to implement some functionality to hide all the others
+    // ------------- THIS HAS BEEN DEPRECATED IN 0.3 ----------------------------
     #region HIDIN'
 
     private void hideAllButSelected()

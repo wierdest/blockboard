@@ -21,7 +21,7 @@ public class ClickAndDrag : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(this);
+        // DontDestroyOnLoad(this);
     }
 
     private void Update()

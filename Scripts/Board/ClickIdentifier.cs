@@ -16,7 +16,7 @@ public class ClickIdentifier : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(this);
+        // DontDestroyOnLoad(this);
     }
     private void Start()
     {
