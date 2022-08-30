@@ -74,3 +74,15 @@ MonoBehaviour:
   - {fileID: 1880843756316286453, guid: b0a593778a0bc503c8b65c1daca2c5cf, type: 3}
   - {fileID: 3298411373102254509, guid: e60207d898a08d232ac76e5ceec328b9, type: 3}
   - {fileID: 2690538262009388573, guid: b7cb83ca73bff1ab78c86b808eed6f72, type: 3}
+  shapes: []
+  lastSelectedShape: {fileID: 0}
+  selectionDuration: 48
+  HasShape: 0
+  inputField: {fileID: 0}
+  colorPicker: {fileID: 0}
+  cameraController: {fileID: 0}
+  splitWidth: 0
+  splitSpacingX: 0
+  splitSpacingY: 0
+  catManager: {fileID: 0}
+  statusText: {fileID: 0}

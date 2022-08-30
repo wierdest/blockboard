@@ -483,12 +483,7 @@ public class ShapeManager : MonoBehaviour
         Debug.Log("Shape Manager: can't do anything like that without a selected shape!");
         return null;
     }
-
-
-
-    
     #endregion
-
 
     // the sixth step is to be able to edit the connection between shapes, the NEXUS
     #region NEXUS
@@ -549,12 +544,9 @@ public class ShapeManager : MonoBehaviour
         }
         // if it's not we're in the clear to add a nexus
         lastSelectedShape.AddNexus(shapes[selectedIndex - 1].gameObject);
-        
 
-        
     }
-
-
-
     #endregion
+
+    
 }

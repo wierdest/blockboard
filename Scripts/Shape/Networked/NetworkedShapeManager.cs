@@ -17,7 +17,7 @@ public class NetworkedShapeManager : NetworkBehaviour
     [SerializeField] private List<NetworkedShape> shapes;
 
     // selecting
-    [SerializeField] private Shape lastSelectedShape;
+    [SerializeField] private NetworkedShape lastSelectedShape;
     [SerializeField] private float selectionDuration;
     private float originalSelectionDuration;
     public bool HasShape;
@@ -27,10 +27,33 @@ public class NetworkedShapeManager : NetworkBehaviour
     [SerializeField] private ColorPicker colorPicker;
     [SerializeField] private CameraController cameraController;
 
+    // splitting
+    private int numberOfShapesBeforeCurrentSplit;
+    [SerializeField] private int splitWidth;
+    [SerializeField] private float splitSpacingX, splitSpacingY;
+    private int originalSplitWidth;
+    private readonly List<char> lineBreaks = new List<char>() { '.', ',', '?', ':', ';', '!'};
+
+    // category manager
+    [SerializeField] private CatManager catManager;
+    private bool hasCatToGive;
+
+    // monitoring status
+    [SerializeField] private TMPro.TMP_Text statusText;
+    private readonly string statusTemplate = "selection: {0}\nduration: {1}";
+
+    public void Init(TMPro.TMP_Text status)
+    {
+        cameraController = Camera.main.GetComponent<CameraController>();
+        colorPicker = FindObjectOfType<ColorPicker>();
+        statusText = status;
+        originalSelectionDuration = selectionDuration;
+        originalSplitWidth = splitWidth;
+    }
     private void Awake()
     {
         shapes = new List<NetworkedShape>();
-        cameraController = Camera.main.GetComponent<CameraController>();
+        
     }
 
     private void instantiateShapeOverNetwork(int prefabIndex)
@@ -49,8 +72,48 @@ public class NetworkedShapeManager : NetworkBehaviour
         shape.Move(cameraController.GetScreenCenter(8f));
         shapes.Add(shape);
     }
+
     public override void FixedUpdateNetwork()
     {
+
+        // connect the networked shape manager to the click and drag's current selection of a networked shape
+        if(ClickAndDrag.Instance.CurrentNetworkedShape)
+        {
+            lastSelectedShape = shapes.First(s => s.Equals(ClickAndDrag.Instance.CurrentNetworkedShape));
+            selectionDuration = originalSelectionDuration;
+            return;
+        }
+
+        if(lastSelectedShape)
+        {
+            selectionDuration -= Time.deltaTime;
+            if(selectionDuration <= 0.0f)
+            {
+                // forget about shape
+                lastSelectedShape = null;
+                selectionDuration = originalSelectionDuration;
+                // bringAllFromHiding();
+                
+            }
+
+            if(hasCatToGive)
+            {
+                addCatFormToCatManager();
+            }
+
+        }
+
+        HasShape = lastSelectedShape != null;
+
+         // status monitor
+        statusText.text = string.Format(
+            statusTemplate,
+            lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
+            selectionDuration == originalSelectionDuration ? "full" : selectionDuration
+        );
+
+
+
         // check input over network
         if(GetInput<InputData>(out var input) == false) return;
 
@@ -61,7 +124,7 @@ public class NetworkedShapeManager : NetworkBehaviour
         // var released = input.Buttons.GetReleased(ButtonsPreviousState);
         // ButtonsPreviousState = input.Buttons;
 
-        // we can check 
+        // we can check for adding shapes:
 
         if(input.Buttons.IsSet(NetworkedBoardButtons.AddCube))
         {
@@ -78,13 +141,96 @@ public class NetworkedShapeManager : NetworkBehaviour
             instantiateShapeOverNetwork((int)ShapeType.Pyramid);
         }
 
-         if(input.Buttons.IsSet(NetworkedBoardButtons.AddSphere))
+        if(input.Buttons.IsSet(NetworkedBoardButtons.AddSphere))
         {
             // spawn sphere
             Debug.Log("Spawning a sphere!");
             instantiateShapeOverNetwork((int)ShapeType.Sphere);
         }
 
+    }
+
+    #region COLOR
+
+    private void colorShape(Color color)
+    {
+        if(!lastSelectedShape)
+        {
+            return;
+        }
+        lastSelectedShape.FacePaint(color);
+    }
+
+    public Color? GetLastSelectedShapeColor()
+    {
+        if(!lastSelectedShape)
+        {
+            return null;
+        }
+        return lastSelectedShape.GetCurrentFaceColor();
+    }
+
+    #endregion
+
+
+    #region CAT
+    public void MakeLastSelectedShapeCatForm()
+    {
+        if(lastSelectedShape)
+        {
+            lastSelectedShape.MakeACatOutOfMe();
+            hasCatToGive = true;
+            return;
+        }
+        Debug.Log("Networked Shape Manager: can't do anything like that without a selected shape!");
 
     }
+
+    public void RemoveLastSelectedShapeCategory()
+    {
+        if(lastSelectedShape)
+        {
+            removeCatFormFromCatManager();
+            lastSelectedShape.RemoveCatForm();
+            return;
+        }
+        Debug.Log("Networked Shape Manager: can't do anything like that without a selected shape!");
+    }
+
+    private void addCatFormToCatManager()
+    {
+        if(!lastSelectedShape)
+        {
+            return;
+        }
+        var cat = lastSelectedShape.GetCatForm();
+        catManager.AddCategory(cat);
+        hasCatToGive = false;
+        Debug.LogFormat("Networked Shape Manager: tried adding cat {0} to shape {1}!", cat.name, lastSelectedShape.name);
+  
+    }
+
+    private void removeCatFormFromCatManager()
+    {
+        var cat = lastSelectedShape.GetCatForm();
+        catManager.RemoveCategory(cat);
+        Debug.LogFormat("Networked Shape Manager: removed cat {0} from shape {1}!", cat.name, lastSelectedShape.name);
+    }
+
+        
+
+    public Category GetLastSelectedShapeCatForm()
+    {
+        if(lastSelectedShape)
+        {
+            return lastSelectedShape.GetCatForm();
+        }
+        Debug.Log("Shape Manager: can't do anything like that without a selected shape!");
+        return null;
+    }
+
+
+
+    
+    #endregion
 }

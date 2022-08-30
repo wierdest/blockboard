@@ -6,8 +6,16 @@ public class ClickAndDrag : MonoBehaviour
 {
     public static ClickAndDrag Instance;
     public GameObject Target;
+
+    // offline shape
     private Hover hover;
     public Shape CurrentShape;
+
+    // networked shape
+    private NetworkedHover networkedHover;
+    public NetworkedShape CurrentNetworkedShape;
+
+
     private Vector3 offset, worldToScreenPos, currentScreenPosition, originalWorldPosition;
     private bool dragging, letGo;
     [SerializeField] private float forgetOffset, rotationCountLimit, rotationCount;
@@ -63,6 +71,15 @@ public class ClickAndDrag : MonoBehaviour
             }
         }
 
+        if(networkedHover)
+        {
+            networkedHover.enabled = !dragging;
+            if(letGo)
+            {
+                networkedHover.UpdateHoverPosition();
+            }
+        }
+
         if(Target && dragging)
         {
             updateCurrentScreenPosition();
@@ -80,15 +97,25 @@ public class ClickAndDrag : MonoBehaviour
                 }
                 CurrentShape = null;
             }
-            rotationCount = 0f;
-            
 
+            if(CurrentNetworkedShape)
+            {
+                if(rotationCount < rotationCountLimit)
+                {
+                    CurrentNetworkedShape.Rotate();
+                }
+                CurrentNetworkedShape = null;
+
+            }
+
+            rotationCount = 0f;
             if(Target != null && Vector3.Distance(Target.transform.position, originalWorldPosition) <= forgetOffset)
             {
                 Target = null;
                 hover = null;
                 letGo = false;
                 CurrentShape = null;
+                CurrentNetworkedShape = null;
             }
             
         }
@@ -112,6 +139,12 @@ public class ClickAndDrag : MonoBehaviour
                 hover = Target.GetComponent<Hover>();
                 CurrentShape = Target.GetComponent<Shape>();
                 
+            }
+
+            if(Target.CompareTag("NetworkedShape"))
+            {
+                networkedHover = Target.GetComponent<NetworkedHover>();
+                CurrentNetworkedShape = Target.GetComponent<NetworkedShape>();
             }
         }
     }

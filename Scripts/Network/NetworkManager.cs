@@ -20,7 +20,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     // manages user interface
     [SerializeField] private GameObject simpleLobbyInterface, hostInterface, clientInterface;
     [SerializeField] private TMPro.TMP_InputField sessionNameInputField;
-    [SerializeField] private TMPro.TMP_Text lobbyWarningText, hostStatusText, clientStatusText;
+    [SerializeField] private TMPro.TMP_Text lobbyWarningText, hostStatusText, clientStatusText, networkedShapeManagerStatus;
     private readonly string hostStatusTemplate = "hosting {0}  to:  {1} user{2}";
 
     // activates our input provider on connection
@@ -131,7 +131,10 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             NetworkObject networkPlayerObject = runner.Spawn(
 				playerPrefab, Vector3.zero, 
 				Quaternion.identity, 
-				player
+				player,
+                (runner, o) => {
+                    o.GetComponent<NetworkedShapeManager>().Init(networkedShapeManagerStatus);
+                }
 			);
             spawnedPlayers.Add(player, networkPlayerObject);
             var count = spawnedPlayers.Count;

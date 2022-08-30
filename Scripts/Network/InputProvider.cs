@@ -49,7 +49,6 @@ public class InputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 		
 	}
 
-
     #endregion
 
    

@@ -707,6 +707,15 @@ MonoBehaviour:
   IsHidden: 0
   IsSplit: 0
   IsPiece: 0
+  catForm:
+    name: 
+    color:
+      colorStore:
+      - 1
+      - 1
+      - 1
+      - 1
+    examples: []
 --- !u!114 &4310446270568846203
 MonoBehaviour:
   m_ObjectHideFlags: 0

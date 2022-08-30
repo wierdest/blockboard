@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 3298411373102254550}
   m_Layer: 0
   m_Name: NetworkedPyramid
-  m_TagString: Untagged
+  m_TagString: NetworkedShape
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  Type: 0
+  Type: 1
   faceTexts:
   - {fileID: 3920784685434936540}
   - {fileID: 5839605477531450307}
