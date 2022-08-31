@@ -25,7 +25,7 @@ public class SkyAndSunRotation : MonoBehaviour
         skyRate += (sunRate - (sunRate * 0.4f)) ;
         sky.SetFloat("_Rotation", skyRate);
 
-        if(ClickAndDrag.Instance.CurrentShape != null)
+        if(ClickAndDrag.Instance.CurrentShape != null || ClickAndDrag.Instance.CurrentNetworkedShape != null)
         {
             if(!hasReset)
             {

@@ -15,21 +15,26 @@ public class NetworkedShape : NetworkBehaviour
     [SerializeField] private List<Vector3> rotationAngles;
 
     /// !!! Make sure both Lists above are always coherent !!! ///
-
     // Rotation
     [SerializeField] private Vector3 activeAngle; 
     private Quaternion originalRotation;
-    [SerializeField] private int activeFaceRotationIndex;
+
+    /// networked rotation attribute
+    [Networked(OnChanged=nameof(OnChangedActiveRotationIndex))] public int ActiveFaceRotationIndex {get; set;}
     private bool rotate, rotateBottomOrTop, resetRotation;
     [SerializeField] private float rotationSpeed;
 
     // Text
+    /// networked string attribute
+    [Networked(OnChanged=nameof(OnChangedActiveFaceTextString))] 
+    public NetworkString<_512> ActiveFaceTextString {get; set;}
     [SerializeField] private TMPro.TMP_Text activeFaceText;
     public List<string> ActiveTextSplit;
     private bool hasUpdatedActiveTextSplitForPyramid;
     private readonly string contentIdString = " contains {0}...";
 
     // Color
+    [Networked(OnChanged=nameof(OnChangedFaceColorNetwork))] public Color LastSetColor { get; set; }
     [SerializeField] private MeshRenderer meshRenderer;
 
     // Movement around world
@@ -48,18 +53,25 @@ public class NetworkedShape : NetworkBehaviour
     // Cat
     [SerializeField] private Category catForm;
 
-    private void Awake()
+    public void OnInit()
     {
         originalRotation = transform.rotation;
-        activeFaceText = Type == ShapeType.Pyramid ? null : faceTexts[activeFaceRotationIndex];
+        activeFaceText = Type == ShapeType.Pyramid ? null : faceTexts[ActiveFaceRotationIndex];
         hover = GetComponent<NetworkedHover>();
-        originalMoveSpeed = moveSpeed;
+        hover.enabled = false;
         ActiveTextSplit = new List<string>();
         catForm = new Category();
         catForm.examples  = new List<string>();
         nexus = GetComponent<NetworkedNexus>();
+
     }
 
+    // network rotation
+    protected static void OnChangedActiveRotationIndex(Changed<NetworkedShape> changed)
+    {
+        changed.LoadNew();
+        changed.Behaviour.Rotate();
+    }
     public void Rotate()
     {
         if(rotate)
@@ -67,12 +79,11 @@ public class NetworkedShape : NetworkBehaviour
             // Debug.Log("Shape is already rotating!");
             return;
         }
-
         // Debug.Log("Rotating shape'");
-        activeFaceRotationIndex++;
-        if(activeFaceRotationIndex > rotationAngles.Count - 1) 
+        // ActiveFaceRotationIndex++;
+        if(ActiveFaceRotationIndex > rotationAngles.Count - 1) 
         {
-            activeFaceRotationIndex = 0;
+            ActiveFaceRotationIndex = 0;
             if(Type != ShapeType.Sphere)
             {
                 transform.SetPositionAndRotation(transform.position, originalRotation);
@@ -82,8 +93,8 @@ public class NetworkedShape : NetworkBehaviour
             
         }
 
-        activeFaceText = (Type == ShapeType.Pyramid) ? (activeFaceRotationIndex == 0 ? null : faceTexts[activeFaceRotationIndex - 1]) : faceTexts[activeFaceRotationIndex];
-        activeAngle = rotationAngles[activeFaceRotationIndex];
+        activeFaceText = (Type == ShapeType.Pyramid) ? (ActiveFaceRotationIndex == 0 ? null : faceTexts[ActiveFaceRotationIndex - 1]) : faceTexts[ActiveFaceRotationIndex];
+        activeAngle = rotationAngles[ActiveFaceRotationIndex];
 
         if(resetRotation)
         {
@@ -134,7 +145,16 @@ public class NetworkedShape : NetworkBehaviour
     }
 
     #region TEXT
-    public void Write(string str)
+
+    //network text
+    protected static void OnChangedActiveFaceTextString(Changed<NetworkedShape> changed)
+    {
+        changed.LoadNew();
+        var newString = changed.Behaviour.ActiveFaceTextString;
+        changed.Behaviour.Write(newString.ToString());
+    }
+
+    private void Write(string str)
     {
         // Debug.LogFormat("Shape {0} WRITING! {1}", name, str);
 
@@ -150,30 +170,7 @@ public class NetworkedShape : NetworkBehaviour
             return;
         }
 
-        if(Type == ShapeType.Pyramid)
-        {
-            faceTexts[0].text = str;
-            faceTexts[2].text = str;
-            hasUpdatedActiveTextSplitForPyramid = false;
-            return;
-        }
-
-    }
-  
-    public void FinishUpWriting(string str)
-    {
-        if(string.IsNullOrEmpty(str))
-        {
-            // resetTextToSample();
-            return;
-        }
-
-        if(activeFaceText)
-        {
-            activeFaceText.text = str;
-            return;
-        }
-      
+        // slight change in behaviour for pyramids when online: we don't split mid sentence anymore
         if(Type == ShapeType.Pyramid)
         {
             faceTexts[0].text = str;
@@ -183,12 +180,11 @@ public class NetworkedShape : NetworkBehaviour
             writePyramidDefaultDisplay();
             return;
         }
-        
+
     }
 
     public void SplitActiveText()
     {
-       
         if(Type == ShapeType.Pyramid)
         {
             var str = string.Concat(faceTexts[2].text, faceTexts[0].text);
@@ -198,14 +194,14 @@ public class NetworkedShape : NetworkBehaviour
                 return;
             }
 
-            if(activeFaceRotationIndex == 0)
+            if(ActiveFaceRotationIndex == 0)
             {
                
                 ActiveTextSplit = str.Split(new char[] {' '}).ToList();
                 return;
             }
 
-            ActiveTextSplit = splitFaceText(activeFaceRotationIndex - 1);
+            ActiveTextSplit = splitFaceText(ActiveFaceRotationIndex - 1);
 
             return;
 
@@ -213,7 +209,7 @@ public class NetworkedShape : NetworkBehaviour
 
         if(activeFaceText)
         {
-            ActiveTextSplit = splitFaceText(activeFaceRotationIndex);
+            ActiveTextSplit = splitFaceText(ActiveFaceRotationIndex);
             return;
         }
     }
@@ -278,29 +274,47 @@ public class NetworkedShape : NetworkBehaviour
     
     #region COLOR
 
-    public void FacePaint(Color color)
+    // network color
+    protected static void OnChangedFaceColorNetwork(Changed<NetworkedShape> changed)
+    {
+        changed.LoadNew();
+        // var newColor = ColorNameConverter.FindColor(changed.Behaviour.LastSetColor);
+        var c = changed.Behaviour.LastSetColor;
+        
+        changed.Behaviour.facePaint(c);
+
+
+        // changed.LoadOld();
+        // var oldColor = ColorNameConverter.FindColor(changed.Behaviour.LastSetColor);
+
+        // Debug.LogFormat("Changed from {0} to {1}", newColor, oldColor);
+        
+
+    }
+    private void facePaint(Color color)
     {
         // Debug.LogFormat("Shape {0} COLORING! index q {1}", name, activeFaceRotationIndex);
         if(activeFaceText)
         {
-            int faceMaterial = Type == ShapeType.Pyramid ? PyramidMaterialMapping(activeFaceText.name) : activeFaceRotationIndex;
+            int faceMaterial = Type == ShapeType.Pyramid ? PyramidMaterialMapping(activeFaceText.name) : ActiveFaceRotationIndex;
         
-            meshRenderer.materials[faceMaterial].color = color;
+            meshRenderer.materials[faceMaterial].color = LastSetColor;
             return;
         }
 
         if(Type == ShapeType.Pyramid)
         {
-            meshRenderer.materials[0].color = color;
+            meshRenderer.materials[0].color = LastSetColor;
             return;
         }
+
     }
 
     public Color GetCurrentFaceColor()
     {
         if(activeFaceText)
         {
-            int faceMaterial = Type == ShapeType.Pyramid ? PyramidMaterialMapping(activeFaceText.name) : activeFaceRotationIndex;
+            int faceMaterial = Type == ShapeType.Pyramid ? PyramidMaterialMapping(activeFaceText.name) : ActiveFaceRotationIndex;
             return meshRenderer.materials[faceMaterial].color;
         }
 
@@ -373,8 +387,6 @@ public class NetworkedShape : NetworkBehaviour
         nexus.Root = root;
         nexus.Activate();
     }
-
-
 
     public bool HasNexus()
     {

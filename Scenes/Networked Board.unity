@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.5058823, g: 0.5542676, b: 0.5801555, a: 1}
+  m_IndirectSpecularColor: {r: 0.50593543, g: 0.5542669, b: 0.5802151, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1053,13 +1053,13 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 0
+  m_CharacterLimit: 500
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
-        m_MethodName: OnTextInputEndEdit
+      - m_Target: {fileID: 1999384508}
+        m_TargetAssemblyTypeName: InputProvider, Assembly-CSharp
+        m_MethodName: OnInputEndEdit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1087,9 +1087,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
-        m_MethodName: OnTextInputValueChange
+      - m_Target: {fileID: 1999384508}
+        m_TargetAssemblyTypeName: InputProvider, Assembly-CSharp
+        m_MethodName: OnInputValueChanged
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2474,8 +2474,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 484921828}
-        m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
+      - m_Target: {fileID: 1999384508}
+        m_TargetAssemblyTypeName: InputProvider, Assembly-CSharp
         m_MethodName: OnClickSplitButton
         m_Mode: 1
         m_Arguments:
@@ -4064,8 +4064,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 484921828}
-        m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
+      - m_Target: {fileID: 1999384508}
+        m_TargetAssemblyTypeName: InputProvider, Assembly-CSharp
         m_MethodName: OnClickRemoveButton
         m_Mode: 1
         m_Arguments:
@@ -4692,8 +4692,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 484921828}
-        m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
+      - m_Target: {fileID: 1999384508}
+        m_TargetAssemblyTypeName: InputProvider, Assembly-CSharp
         m_MethodName: OnClickUndoButton
         m_Mode: 1
         m_Arguments:
@@ -7036,6 +7036,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2f15f456ca3fdc3cb13d9793a29a32d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colorPicker: {fileID: 1627482289}
+  inputField: {fileID: 100606278}
 --- !u!4 &1999384509
 Transform:
   m_ObjectHideFlags: 0
@@ -7044,7 +7046,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1999384507}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 612, y: 472.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7873,15 +7875,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1536308671886509153, guid: 1469a46f9c5e216c2a737945132463ec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.04276459
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1536308671886509153, guid: 1469a46f9c5e216c2a737945132463ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.39648354
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1536308671886509153, guid: 1469a46f9c5e216c2a737945132463ec, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0758419
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1536308671886509153, guid: 1469a46f9c5e216c2a737945132463ec, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8176,11 +8178,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5240358503270241116, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 612
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5240358503270241116, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 472.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5240358503270241116, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8296,21 +8298,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Click And Drag
       objectReference: {fileID: 0}
+    - target: {fileID: 6843490908534263270, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
+      propertyPath: networkInputProvider
+      value: 
+      objectReference: {fileID: 1999384508}
     - target: {fileID: 6843490908534263271, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6843490908534263271, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.04276459
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6843490908534263271, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.39648354
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6843490908534263271, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0758419
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6843490908534263271, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8380,11 +8386,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8356731362811006015, guid: ce95f723310b7b7c9bc1a8f9c15eba80, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 612
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8356731362811006015, guid: ce95f723310b7b7c9bc1a8f9c15eba80, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 472.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8356731362811006015, guid: ce95f723310b7b7c9bc1a8f9c15eba80, type: 3}
       propertyPath: m_LocalPosition.z

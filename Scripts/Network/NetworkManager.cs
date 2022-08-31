@@ -98,6 +98,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         if(runner.IsClient)
         {
             clientInterface.SetActive(true);
+            Destroy(ClickAndDrag.Instance.gameObject);
             yield return null;
         }
         
@@ -133,7 +134,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 				Quaternion.identity, 
 				player,
                 (runner, o) => {
-                    o.GetComponent<NetworkedShapeManager>().Init(networkedShapeManagerStatus);
+                    o.GetComponent<NetworkedShapeManager>().OnInit(networkedShapeManagerStatus);
                 }
 			);
             spawnedPlayers.Add(player, networkPlayerObject);

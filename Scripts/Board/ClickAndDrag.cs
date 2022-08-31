@@ -15,6 +15,9 @@ public class ClickAndDrag : MonoBehaviour
     private NetworkedHover networkedHover;
     public NetworkedShape CurrentNetworkedShape;
 
+    // network input provider
+    [SerializeField] InputProvider networkInputProvider;
+
 
     private Vector3 offset, worldToScreenPos, currentScreenPosition, originalWorldPosition;
     private bool dragging, letGo;
@@ -102,7 +105,7 @@ public class ClickAndDrag : MonoBehaviour
             {
                 if(rotationCount < rotationCountLimit)
                 {
-                    CurrentNetworkedShape.Rotate();
+                    CurrentNetworkedShape.ActiveFaceRotationIndex++;
                 }
                 CurrentNetworkedShape = null;
 
@@ -145,6 +148,7 @@ public class ClickAndDrag : MonoBehaviour
             {
                 networkedHover = Target.GetComponent<NetworkedHover>();
                 CurrentNetworkedShape = Target.GetComponent<NetworkedShape>();
+                networkInputProvider.SelectNetworkedShape(CurrentNetworkedShape.Id);
             }
         }
     }

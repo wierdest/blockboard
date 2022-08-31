@@ -13,18 +13,19 @@ public class NetworkedShapeManager : NetworkBehaviour
 
     // these should be networked versions of our shapes
     [SerializeField] private List<GameObject> prefabs; // order should mirror enum ShapeTypes
-    // keeps track of the shapes
-    [SerializeField] private List<NetworkedShape> shapes;
 
     // selecting
-    [SerializeField] private NetworkedShape lastSelectedShape;
+    [Networked(OnChanged=nameof(OnChangedShapeSelection))] public NetworkBehaviourId LastSelectedShapeId {get; set;} 
+    private NetworkedShape lastSelectedShape;
     [SerializeField] private float selectionDuration;
     private float originalSelectionDuration;
-    public bool HasShape;
 
-    // modifying (user interface elements to connect)
+    // stores last text
+    private NetworkString<_512> lastOnGoingTextInput, lastFinishedTextInput;
     [SerializeField] private TMPro.TMP_InputField inputField;
-    [SerializeField] private ColorPicker colorPicker;
+
+    // stores last color 
+    private Color lastColor;
     [SerializeField] private CameraController cameraController;
 
     // splitting
@@ -34,26 +35,17 @@ public class NetworkedShapeManager : NetworkBehaviour
     private int originalSplitWidth;
     private readonly List<char> lineBreaks = new List<char>() { '.', ',', '?', ':', ';', '!'};
 
-    // category manager
-    [SerializeField] private CatManager catManager;
-    private bool hasCatToGive;
 
     // monitoring status
     [SerializeField] private TMPro.TMP_Text statusText;
     private readonly string statusTemplate = "selection: {0}\nduration: {1}";
 
-    public void Init(TMPro.TMP_Text status)
+    public void OnInit(TMPro.TMP_Text status)
     {
         cameraController = Camera.main.GetComponent<CameraController>();
-        colorPicker = FindObjectOfType<ColorPicker>();
         statusText = status;
         originalSelectionDuration = selectionDuration;
         originalSplitWidth = splitWidth;
-    }
-    private void Awake()
-    {
-        shapes = new List<NetworkedShape>();
-        
     }
 
     private void instantiateShapeOverNetwork(int prefabIndex)
@@ -64,59 +56,33 @@ public class NetworkedShapeManager : NetworkBehaviour
         tmp = Runner.Spawn(
             toInstatiate,
             cameraController.GetScreenTop(8f),
-            toInstatiate.transform.rotation
-
+            toInstatiate.transform.rotation,
+            Runner.LocalPlayer,
+            (runner, o) => {
+                NetworkedShape shape = o.GetComponent<NetworkedShape>();
+                shape.OnInit();
+                shape.Move(cameraController.GetScreenCenter(8f));
+                
+            }
         );
-        tmp.GetComponent<NetworkedHover>().enabled = false;
-        NetworkedShape shape = tmp.GetComponent<NetworkedShape>();
-        shape.Move(cameraController.GetScreenCenter(8f));
-        shapes.Add(shape);
+    }
+
+    protected static void OnChangedShapeSelection(Changed<NetworkedShapeManager> changed)
+    {
+        changed.LoadNew();
+        changed.Behaviour.tryToFindNetworkedShape();
+    }
+
+    private void tryToFindNetworkedShape()
+    {
+        Runner.TryFindBehaviour<NetworkedShape>(LastSelectedShapeId, out lastSelectedShape);
+        Debug.Log("Check 2");
     }
 
     public override void FixedUpdateNetwork()
     {
 
-        // connect the networked shape manager to the click and drag's current selection of a networked shape
-        if(ClickAndDrag.Instance.CurrentNetworkedShape)
-        {
-            lastSelectedShape = shapes.First(s => s.Equals(ClickAndDrag.Instance.CurrentNetworkedShape));
-            selectionDuration = originalSelectionDuration;
-            return;
-        }
-
-        if(lastSelectedShape)
-        {
-            selectionDuration -= Time.deltaTime;
-            if(selectionDuration <= 0.0f)
-            {
-                // forget about shape
-                lastSelectedShape = null;
-                selectionDuration = originalSelectionDuration;
-                // bringAllFromHiding();
-                
-            }
-
-            if(hasCatToGive)
-            {
-                addCatFormToCatManager();
-            }
-
-        }
-
-        HasShape = lastSelectedShape != null;
-
-         // status monitor
-        statusText.text = string.Format(
-            statusTemplate,
-            lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
-            selectionDuration == originalSelectionDuration ? "full" : selectionDuration
-        );
-
-
-
-        // check input over network
         if(GetInput<InputData>(out var input) == false) return;
-
 
         /// process button states if we need those
 
@@ -125,7 +91,6 @@ public class NetworkedShapeManager : NetworkBehaviour
         // ButtonsPreviousState = input.Buttons;
 
         // we can check for adding shapes:
-
         if(input.Buttons.IsSet(NetworkedBoardButtons.AddCube))
         {
             // spawn cube
@@ -148,89 +113,43 @@ public class NetworkedShapeManager : NetworkBehaviour
             instantiateShapeOverNetwork((int)ShapeType.Sphere);
         }
 
-    }
-
-    #region COLOR
-
-    private void colorShape(Color color)
-    {
-        if(!lastSelectedShape)
+        if(!input.SelectedShapeId.Equals(LastSelectedShapeId) && input.SelectedShapeId.IsValid)
         {
-            return;
+            LastSelectedShapeId = input.SelectedShapeId;
         }
-        lastSelectedShape.FacePaint(color);
-    }
 
-    public Color? GetLastSelectedShapeColor()
-    {
-        if(!lastSelectedShape)
-        {
-            return null;
-        }
-        return lastSelectedShape.GetCurrentFaceColor();
-    }
-
-    #endregion
-
-
-    #region CAT
-    public void MakeLastSelectedShapeCatForm()
-    {
         if(lastSelectedShape)
         {
-            lastSelectedShape.MakeACatOutOfMe();
-            hasCatToGive = true;
-            return;
+			// status monitor if we host
+			if(Runner.IsServer)
+			{
+				selectionDuration -= Time.deltaTime;
+				if(selectionDuration <= 0.0f)
+				{
+					// forget about shape
+					lastSelectedShape = null;
+					selectionDuration = originalSelectionDuration;
+					// bringAllFromHiding();	
+				}
+
+				statusText.text = string.Format(
+					statusTemplate,
+					lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
+					selectionDuration == originalSelectionDuration ? "full" : selectionDuration
+				);
+			}
+
+            if(!input.SelectedShapeColor.Equals(lastColor))
+            {
+                lastColor = input.SelectedShapeColor;
+                lastSelectedShape.LastSetColor = lastColor;
+            }
+
+            lastSelectedShape.ActiveFaceTextString = input.InputText;
+            
         }
-        Debug.Log("Networked Shape Manager: can't do anything like that without a selected shape!");
-
     }
 
-    public void RemoveLastSelectedShapeCategory()
-    {
-        if(lastSelectedShape)
-        {
-            removeCatFormFromCatManager();
-            lastSelectedShape.RemoveCatForm();
-            return;
-        }
-        Debug.Log("Networked Shape Manager: can't do anything like that without a selected shape!");
-    }
+   
 
-    private void addCatFormToCatManager()
-    {
-        if(!lastSelectedShape)
-        {
-            return;
-        }
-        var cat = lastSelectedShape.GetCatForm();
-        catManager.AddCategory(cat);
-        hasCatToGive = false;
-        Debug.LogFormat("Networked Shape Manager: tried adding cat {0} to shape {1}!", cat.name, lastSelectedShape.name);
-  
-    }
-
-    private void removeCatFormFromCatManager()
-    {
-        var cat = lastSelectedShape.GetCatForm();
-        catManager.RemoveCategory(cat);
-        Debug.LogFormat("Networked Shape Manager: removed cat {0} from shape {1}!", cat.name, lastSelectedShape.name);
-    }
-
-        
-
-    public Category GetLastSelectedShapeCatForm()
-    {
-        if(lastSelectedShape)
-        {
-            return lastSelectedShape.GetCatForm();
-        }
-        Debug.Log("Shape Manager: can't do anything like that without a selected shape!");
-        return null;
-    }
-
-
-
-    
-    #endregion
 }
