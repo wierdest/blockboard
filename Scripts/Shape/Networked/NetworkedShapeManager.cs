@@ -17,17 +17,17 @@ public class NetworkedShapeManager : NetworkBehaviour
     // selecting
     [Networked(OnChanged=nameof(OnChangedShapeSelection))] public NetworkBehaviourId LastSelectedShapeId {get; set;} 
     private NetworkedShape lastSelectedShape;
+    // keeps track o shapes for easy disposal
+    [SerializeField] private List<NetworkedShape> shapes; 
+    
     [SerializeField] private float selectionDuration;
     private float originalSelectionDuration;
-
     // stores last text
     private NetworkString<_512> lastOnGoingTextInput, lastFinishedTextInput;
     [SerializeField] private TMPro.TMP_InputField inputField;
-
     // stores last color 
     private Color lastColor;
     [SerializeField] private CameraController cameraController;
-
     // splitting
     private int numberOfShapesBeforeCurrentSplit;
     [SerializeField] private int splitWidth;
@@ -67,6 +67,41 @@ public class NetworkedShapeManager : NetworkBehaviour
         );
     }
 
+    private void removeLast()
+    {
+        if(shapes.Count <= 0)
+        {
+            Debug.Log("Networked Shape Manager: Nothing to remove!");
+            return;
+
+        }
+
+        if(lastSelectedShape)
+        {
+            shapes.Remove(lastSelectedShape);
+            Runner.Despawn(lastSelectedShape.GetComponent<NetworkObject>());
+            lastSelectedShape = null;
+            selectionDuration = originalSelectionDuration;
+            return;
+            
+        }
+
+        var last = shapes.Last();
+        shapes.Remove(last);
+        Runner.Despawn(last.GetComponent<NetworkObject>());
+    }
+
+    private void removeAll()
+    {
+        foreach(NetworkedShape shape in shapes)
+        {
+            Runner.Despawn(shape.GetComponent<NetworkObject>());
+        }
+        lastSelectedShape = null;
+        shapes.Clear();
+        
+    }
+
     protected static void OnChangedShapeSelection(Changed<NetworkedShapeManager> changed)
     {
         changed.LoadNew();
@@ -76,13 +111,27 @@ public class NetworkedShapeManager : NetworkBehaviour
     private void tryToFindNetworkedShape()
     {
         Runner.TryFindBehaviour<NetworkedShape>(LastSelectedShapeId, out lastSelectedShape);
-        Debug.Log("Check 2");
+        if(lastSelectedShape)
+        {
+            if(!shapes.Any(s => s.Equals(lastSelectedShape)))
+            {
+                Debug.Log("Netowrked Shape Manager: Adding a Shape!");
+                shapes.Add(lastSelectedShape);
+            }
+            
+        }
     }
 
     public override void FixedUpdateNetwork()
     {
 
         if(GetInput<InputData>(out var input) == false) return;
+
+        // the first check is for selection
+        if(!input.SelectedShapeId.Equals(LastSelectedShapeId) && input.SelectedShapeId.IsValid)
+        {
+            LastSelectedShapeId = input.SelectedShapeId;
+        }
 
         /// process button states if we need those
 
@@ -91,6 +140,21 @@ public class NetworkedShapeManager : NetworkBehaviour
         // ButtonsPreviousState = input.Buttons;
 
         // we can check for adding shapes:
+        /// 0 
+        if(input.Buttons.IsSet(NetworkedBoardButtons.AddSphere))
+        {
+            // spawn sphere
+            Debug.Log("Spawning a sphere!");
+            instantiateShapeOverNetwork((int)ShapeType.Sphere);
+        }
+        /// 1
+        if(input.Buttons.IsSet(NetworkedBoardButtons.AddPyramid))
+        {
+            // spawn pyramid
+            Debug.Log("Spawning a pyramid!");
+            instantiateShapeOverNetwork((int)ShapeType.Pyramid);
+        }
+        /// 2
         if(input.Buttons.IsSet(NetworkedBoardButtons.AddCube))
         {
             // spawn cube
@@ -98,26 +162,19 @@ public class NetworkedShapeManager : NetworkBehaviour
             instantiateShapeOverNetwork((int)ShapeType.Cube);
 
         }
-
-        if(input.Buttons.IsSet(NetworkedBoardButtons.AddPyramid))
+        /// 3
+        if(input.Buttons.IsSet(NetworkedBoardButtons.RemoveLast))
         {
-            // spawn pyramid
-            Debug.Log("Spawning a pyramid!");
-            instantiateShapeOverNetwork((int)ShapeType.Pyramid);
+            removeLast();
         }
-
-        if(input.Buttons.IsSet(NetworkedBoardButtons.AddSphere))
+        /// 4
+        if(input.Buttons.IsSet(NetworkedBoardButtons.RemoveAll))
         {
-            // spawn sphere
-            Debug.Log("Spawning a sphere!");
-            instantiateShapeOverNetwork((int)ShapeType.Sphere);
+            removeAll();
         }
+        
 
-        if(!input.SelectedShapeId.Equals(LastSelectedShapeId) && input.SelectedShapeId.IsValid)
-        {
-            LastSelectedShapeId = input.SelectedShapeId;
-        }
-
+    
         if(lastSelectedShape)
         {
 			// status monitor if we host
@@ -129,16 +186,8 @@ public class NetworkedShapeManager : NetworkBehaviour
 					// forget about shape
 					lastSelectedShape = null;
 					selectionDuration = originalSelectionDuration;
-					// bringAllFromHiding();	
 				}
-
-				statusText.text = string.Format(
-					statusTemplate,
-					lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
-					selectionDuration == originalSelectionDuration ? "full" : selectionDuration
-				);
 			}
-
             if(!input.SelectedShapeColor.Equals(lastColor))
             {
                 lastColor = input.SelectedShapeColor;
@@ -146,7 +195,16 @@ public class NetworkedShapeManager : NetworkBehaviour
             }
 
             lastSelectedShape.ActiveFaceTextString = input.InputText;
-            
+        }
+
+        // host monitor status
+        if(Runner.IsServer)
+        {
+            statusText.text = string.Format(
+                statusTemplate,
+                lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
+                selectionDuration == originalSelectionDuration ? "full" : selectionDuration
+            );
         }
     }
 
