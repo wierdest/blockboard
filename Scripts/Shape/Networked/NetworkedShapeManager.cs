@@ -10,6 +10,7 @@ public class NetworkedShapeManager : NetworkBehaviour
     /// I'm a NetworkBehaviour from Fusion!
     /// I'm to be attached to a User Prefab, a Fusion NetworkObject!
     [Networked] public NetworkButtons ButtonsPreviousState { get; set; }
+    private NetworkObject networkObject;
 
     // these should be networked versions of our shapes
     [SerializeField] private List<GameObject> prefabs; // order should mirror enum ShapeTypes
@@ -17,17 +18,19 @@ public class NetworkedShapeManager : NetworkBehaviour
     // selecting
     [Networked(OnChanged=nameof(OnChangedShapeSelection))] public NetworkBehaviourId LastSelectedShapeId {get; set;} 
     private NetworkedShape lastSelectedShape;
-    // keeps track o shapes for easy disposal
+    // keeps track of shapes for easy disposal
     [SerializeField] private List<NetworkedShape> shapes; 
-    
+
     [SerializeField] private float selectionDuration;
     private float originalSelectionDuration;
     // stores last text
     private NetworkString<_512> lastOnGoingTextInput, lastFinishedTextInput;
     [SerializeField] private TMPro.TMP_InputField inputField;
+    
     // stores last color 
     private Color lastColor;
     [SerializeField] private CameraController cameraController;
+    
     // splitting
     private int numberOfShapesBeforeCurrentSplit;
     [SerializeField] private int splitWidth;
@@ -40,13 +43,18 @@ public class NetworkedShapeManager : NetworkBehaviour
     [SerializeField] private TMPro.TMP_Text statusText;
     private readonly string statusTemplate = "selection: {0}\nduration: {1}";
 
-    public void OnInit(TMPro.TMP_Text status)
+    public void OnInit(TMPro.TMP_Text tmpText)
     {
         cameraController = Camera.main.GetComponent<CameraController>();
-        statusText = status;
         originalSelectionDuration = selectionDuration;
         originalSplitWidth = splitWidth;
+        networkObject = GetComponent<NetworkObject>();
+        statusText = tmpText;
+        
     }
+
+
+    #region ADD & REMOVE 
 
     private void instantiateShapeOverNetwork(int prefabIndex)
     {
@@ -62,9 +70,11 @@ public class NetworkedShapeManager : NetworkBehaviour
                 NetworkedShape shape = o.GetComponent<NetworkedShape>();
                 shape.OnInit();
                 shape.Move(cameraController.GetScreenCenter(8f));
+                shapes.Add(shape);
                 
             }
         );
+        
     }
 
     private void removeLast()
@@ -102,6 +112,113 @@ public class NetworkedShapeManager : NetworkBehaviour
         
     }
 
+    #endregion
+
+    #region SPLIT
+
+    private void instatiatePieceShapeOnNetwork(int prefabIndex, string text, int indexCount, int xCount, int yCount, bool nexusBreak)
+    {
+        // reset camera
+        cameraController.Reset();
+        // instantiate a copy of the selected shape
+        GameObject toInstantiate = (prefabIndex == -1 ? prefabs[(int)lastSelectedShape.Type] : prefabs[0]) as GameObject;
+
+        // size the object
+        Vector3 size = toInstantiate.GetComponent<Collider>().bounds.size;
+
+        // position in a grid
+        var rowOffset = (Vector3.right * (size.x + splitSpacingX)) * xCount;
+        var colOffset = (Vector3.down * (size.y + splitSpacingY)) * yCount;
+        var z = prefabIndex == -1 ? 10f : 15f;
+
+        NetworkObject tmp;
+        tmp = Runner.Spawn(
+            toInstantiate, 
+            cameraController.GetScreenTop(z) + colOffset + rowOffset, 
+            toInstantiate.transform.rotation,
+            Runner.LocalPlayer,
+            (runner, o) => {
+                NetworkedShape shape = o.GetComponent<NetworkedShape>();
+                shape.IsPiece = true;
+                shape.OnInit();
+                shape.ActiveFaceTextString = text;
+                shape.Move(cameraController.GetScreenCenter(z) + colOffset +  rowOffset);
+                shapes.Add(shape);  
+            }
+        );
+        // shapes.Last<NetworkedShape>().ActiveFaceTextString = text;
+        NetworkedNexus nexus = tmp.GetComponent<NetworkedNexus>();
+        var selectedShapeIndex = shapes.FindIndex(0, shapes.Count - 1, s => s.Equals(lastSelectedShape));
+        var nexusRootIndex = !nexusBreak ? numberOfShapesBeforeCurrentSplit + (indexCount - 1) : selectedShapeIndex;
+        nexus.Root = shapes[nexusRootIndex].gameObject;
+        nexus.Activate();
+    }
+
+    private void splitShape()
+    {
+        if(!lastSelectedShape)
+        {
+            return;
+        }
+
+        if(lastSelectedShape.IsPiece)
+        {
+            lastSelectedShape.RemoveRootCloud();
+        }
+
+        lastSelectedShape.SplitActiveText();
+        
+        if(lastSelectedShape.ActiveTextSplit.Count <= 0)
+        {
+            Debug.LogFormat("Networked Shape Manager: shape {0} has ZERO strings in ActiveTextSplit!", lastSelectedShape.gameObject.name);
+            return;
+        }
+
+        // hideAllButSelected();
+
+        // grid positioning variables to instantiate the chip shape
+
+        int xCount = 0, yCount = 0;
+        // bool to store conditions that lead to a nexus break between shapes
+        bool nexusBreak = false;
+        numberOfShapesBeforeCurrentSplit = shapes.Count;
+
+        // this is a split based on the active text split
+        var split = lastSelectedShape.ActiveTextSplit;
+        Debug.LogFormat("SPLIT LENGTH: {0}", split.Count);
+        var numberOfTokens = split.Count;
+        bool splitAtCharLevel = numberOfTokens == 1;
+
+        for(int i = 0; i < (splitAtCharLevel ? split[0].Length : numberOfTokens); i++)
+        {
+            string str = splitAtCharLevel ? split[0][i].ToString() : split[i];
+            Debug.LogFormat("String {0}", str);
+
+            if(string.IsNullOrEmpty(str))
+            {
+                break;
+            }
+
+            var wasLastLinePunctuationBreak = !splitAtCharLevel ? (i != 0 && lineBreaks.Contains(split[i - 1].Last<char>())) : false;
+
+            if(xCount >= splitWidth || wasLastLinePunctuationBreak)
+            {
+                xCount = 0;
+                yCount++;
+            }
+
+            nexusBreak = i == 0 || wasLastLinePunctuationBreak || yCount != 0 && xCount == 0;
+            instatiatePieceShapeOnNetwork(splitAtCharLevel ? (int)ShapeType.Sphere : -1, str, i, xCount, yCount, nexusBreak);
+            xCount++;
+        }
+        
+        lastSelectedShape.IsSplit = true;
+        cameraController.PushCameraOut(5f);
+        // Debug.LogFormat("Shape Manager: shape {0} instantiated {1} piece shapes!", lastSelectedShape.gameObject.name, xCount, nexusBreak);
+    }
+
+    #endregion
+
     protected static void OnChangedShapeSelection(Changed<NetworkedShapeManager> changed)
     {
         changed.LoadNew();
@@ -115,7 +232,7 @@ public class NetworkedShapeManager : NetworkBehaviour
         {
             if(!shapes.Any(s => s.Equals(lastSelectedShape)))
             {
-                Debug.Log("Netowrked Shape Manager: Adding a Shape!");
+                Debug.Log("Networked Shape Manager: Adding a Shape!");
                 shapes.Add(lastSelectedShape);
             }
             
@@ -172,33 +289,18 @@ public class NetworkedShapeManager : NetworkBehaviour
         {
             removeAll();
         }
-        
-
-    
-        if(lastSelectedShape)
+        /// 5
+        if(input.Buttons.IsSet(NetworkedBoardButtons.Split))
         {
-			// status monitor if we host
-			if(Runner.IsServer)
-			{
-				selectionDuration -= Time.deltaTime;
-				if(selectionDuration <= 0.0f)
-				{
-					// forget about shape
-					lastSelectedShape = null;
-					selectionDuration = originalSelectionDuration;
-				}
-			}
-            if(!input.SelectedShapeColor.Equals(lastColor))
+
+            if(lastSelectedShape)
             {
-                lastColor = input.SelectedShapeColor;
-                lastSelectedShape.LastSetColor = lastColor;
+                splitShape();
             }
-
-            lastSelectedShape.ActiveFaceTextString = input.InputText;
         }
-
+        
         // host monitor status
-        if(Runner.IsServer)
+        if(Runner.IsServer && networkObject.HasInputAuthority)
         {
             statusText.text = string.Format(
                 statusTemplate,
@@ -206,8 +308,35 @@ public class NetworkedShapeManager : NetworkBehaviour
                 selectionDuration == originalSelectionDuration ? "full" : selectionDuration
             );
         }
-    }
 
-   
+    
+        if(lastSelectedShape)
+        {
+			if(networkObject.HasInputAuthority)
+			{
+				selectionDuration -= Time.deltaTime;
+				if(selectionDuration <= 0.0f)
+				{
+					// forget about shape
+					lastSelectedShape = null;
+					selectionDuration = originalSelectionDuration;
+                    return;
+				}
+
+                if(!input.InputText.Equals(lastSelectedShape.ActiveFaceTextString))
+                {
+                    lastSelectedShape.ActiveFaceTextString = input.InputText;
+                }
+			}
+            if(!input.SelectedShapeColor.Equals(lastColor))
+            {
+                lastColor = input.SelectedShapeColor;
+                lastSelectedShape.LastSetColor = lastColor;
+            }
+
+        }
+
+        
+    }
 
 }

@@ -371,61 +371,7 @@ public class ShapeManager : MonoBehaviour
 
     #endregion
 
-    // because we split and select a particular shape we need to implement some functionality to hide all the others
-    // ------------- THIS HAS BEEN DEPRECATED IN 0.3 ----------------------------
-    #region HIDIN'
-
-    private void hideAllButSelected()
-    {
-        if(lastSelectedShape)
-        {
-            foreach(Shape s in shapes.Where(
-            s => !s.IsPiece && !s.Equals(lastSelectedShape) && !s.IsSplit)
-            )
-            {
-                if(!s.IsHidden)
-                {
-                    var pos = s.transform.position;
-                    var destination = new Vector3(
-                        pos.x,
-                        pos.y + (Random.Range(-1f, 1f) > 0f ? 40f : -40f),
-                        pos.z
-                    );
-                    s.Move(destination, 4f);
-                    s.IsHidden = true;
-                }
-            }
-
-        }
-        // foreach(Shape s in shapes.Where(
-        //     s => !s.IsPiece && !s.Equals(lastSelectedShape) && !s.IsSplit)
-        // )
-        // {
-        //     if(!s.IsHidden)
-        //     {
-        //         var pos = s.transform.position;
-        //         var destination = new Vector3(
-        //             pos.x,
-        //             pos.y + (Random.Range(-1f, 1f) > 0f ? 40f : -40f),
-        //             pos.z
-        //         );
-        //         s.Move(destination, 4f);
-        //         s.IsHidden = true;
-        //     }
-        // }
-    }
-
-    private void bringAllFromHiding()
-    {
-        foreach(Shape s in shapes.Where(s => s.IsHidden ))
-        {
-            s.MoveBack();
-            s.IsHidden = false;
-        }
-    }
-
-    #endregion
-
+   
     // the fifth step is to connect the category button & manager for interesting printing purposes ! we're done! :)
     #region CAT
 
@@ -485,7 +431,7 @@ public class ShapeManager : MonoBehaviour
     }
     #endregion
 
-    // the sixth step is to be able to edit the connection between shapes, the NEXUS
+    // the fifth step is to be able to edit the connection between shapes, the NEXUS
     #region NEXUS
 
     private void removeAllNexusToSelectedPiece()

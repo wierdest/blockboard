@@ -69,7 +69,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 				lobbyWarningText.text = "All good! We're online!";
 				// load proper user interface for the scene 
 				StartCoroutine(waitToLoadHostOrClientInterface());
-
                 // activates our input provider
                 networkInputProvider.enabled = true; 
 
@@ -127,16 +126,20 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) 
     { 
+
         if(runner.IsServer)
-        {   
+        {
+
             NetworkObject networkPlayerObject = runner.Spawn(
-				playerPrefab, Vector3.zero, 
-				Quaternion.identity, 
-				player,
+                playerPrefab, Vector3.zero, 
+                Quaternion.identity, 
+                player,
                 (runner, o) => {
                     o.GetComponent<NetworkedShapeManager>().OnInit(networkedShapeManagerStatus);
                 }
-			);
+            );
+     
+            Debug.Log("Spawning Server");
             spawnedPlayers.Add(player, networkPlayerObject);
             var count = spawnedPlayers.Count;
             if(count > 1)
@@ -147,6 +150,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
         if(runner.IsClient)
         {
+            Debug.Log("Spawning Server");
             // if we're client set up our session info
             clientStatusText.text = string.Format(
                 clientStatusText.text,

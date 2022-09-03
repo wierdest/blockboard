@@ -7,9 +7,11 @@ public class NetworkedShape : NetworkBehaviour
 {
     public ShapeType Type;
 
-    /// !!! Make sure both Lists above are always coherent !!! ///
+    /// !!! Make sure both Lists belo are always coherent !!! ///
 
     //// A Pyramid has one extra rotation angle: the start position shows TWO faces, LEFT /|\ RIGHT
+
+    /// !!! Make sure both Lists above are always coherent !!! ///
 
     [SerializeField] private List<TMPro.TMP_Text> faceTexts; 
     [SerializeField] private List<Vector3> rotationAngles;
@@ -45,7 +47,7 @@ public class NetworkedShape : NetworkBehaviour
     private NetworkedHover hover;
 
     // Control states
-    public bool IsHidden, IsSplit, IsPiece;
+    public bool IsSplit, IsPiece;
 
     // Nexus: connection between shapes
     private NetworkedNexus nexus;
@@ -56,7 +58,9 @@ public class NetworkedShape : NetworkBehaviour
     public void OnInit()
     {
         originalRotation = transform.rotation;
+        ActiveFaceRotationIndex = 0;
         activeFaceText = Type == ShapeType.Pyramid ? null : faceTexts[ActiveFaceRotationIndex];
+    
         hover = GetComponent<NetworkedHover>();
         hover.enabled = false;
         ActiveTextSplit = new List<string>();
@@ -64,6 +68,13 @@ public class NetworkedShape : NetworkBehaviour
         catForm.examples  = new List<string>();
         nexus = GetComponent<NetworkedNexus>();
 
+    }
+
+    public void OnInitPieceShape(string text)
+    {
+        OnInit();
+        activeFaceText = faceTexts[ActiveFaceRotationIndex];
+  
     }
 
     // network rotation
@@ -146,7 +157,7 @@ public class NetworkedShape : NetworkBehaviour
 
     #region TEXT
 
-    //network text
+    // network text
     protected static void OnChangedActiveFaceTextString(Changed<NetworkedShape> changed)
     {
         changed.LoadNew();
@@ -154,7 +165,7 @@ public class NetworkedShape : NetworkBehaviour
         changed.Behaviour.Write(newString.ToString());
     }
 
-    private void Write(string str)
+    public void Write(string str)
     {
         // Debug.LogFormat("Shape {0} WRITING! {1}", name, str);
 
@@ -163,7 +174,6 @@ public class NetworkedShape : NetworkBehaviour
             // resetTextToSample();
             return;
         }
-
         if(activeFaceText)
         {
             activeFaceText.text = str;
@@ -179,6 +189,12 @@ public class NetworkedShape : NetworkBehaviour
             hasUpdatedActiveTextSplitForPyramid = true;
             writePyramidDefaultDisplay();
             return;
+        }
+
+        // this is for the piece instatiation over the network
+        if(!activeFaceText)
+        {
+            faceTexts[ActiveFaceRotationIndex].text = str;
         }
 
     }
