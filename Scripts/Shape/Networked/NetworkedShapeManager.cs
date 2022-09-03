@@ -43,13 +43,17 @@ public class NetworkedShapeManager : NetworkBehaviour
     [SerializeField] private TMPro.TMP_Text statusText;
     private readonly string statusTemplate = "selection: {0}\nduration: {1}";
 
-    public void OnInit(TMPro.TMP_Text tmpText)
+    // the nexus button monitors the selected shapes's nexus existence
+    [SerializeField] private SwitchButton nexusButton;
+
+    public void OnInit(TMPro.TMP_Text tmpText, SwitchButton switchButton)
     {
         cameraController = Camera.main.GetComponent<CameraController>();
         originalSelectionDuration = selectionDuration;
         originalSplitWidth = splitWidth;
         networkObject = GetComponent<NetworkObject>();
         statusText = tmpText;
+        nexusButton = switchButton;
         
     }
 
@@ -86,8 +90,16 @@ public class NetworkedShapeManager : NetworkBehaviour
 
         }
 
+
+
+
         if(lastSelectedShape)
         {
+            if(lastSelectedShape.IsSplit)
+            {
+                removeAllNexusToSelectedPiece();
+            }
+
             shapes.Remove(lastSelectedShape);
             Runner.Despawn(lastSelectedShape.GetComponent<NetworkObject>());
             lastSelectedShape = null;
@@ -150,8 +162,8 @@ public class NetworkedShapeManager : NetworkBehaviour
         NetworkedNexus nexus = tmp.GetComponent<NetworkedNexus>();
         var selectedShapeIndex = shapes.FindIndex(0, shapes.Count - 1, s => s.Equals(lastSelectedShape));
         var nexusRootIndex = !nexusBreak ? numberOfShapesBeforeCurrentSplit + (indexCount - 1) : selectedShapeIndex;
-        nexus.Root = shapes[nexusRootIndex].gameObject;
-        nexus.Activate();
+        nexus.RootNetworkBehaviourId = shapes[nexusRootIndex].Id;
+        
     }
 
     private void splitShape()
@@ -219,6 +231,62 @@ public class NetworkedShapeManager : NetworkBehaviour
 
     #endregion
 
+    
+    #region NEXUS
+
+    private void removeAllNexusToSelectedPiece()
+    {
+        foreach(NetworkedShape s in shapes)
+        {
+            if(s.IsPiece && lastSelectedShape)
+            {
+                s.RemoveRootCloud(lastSelectedShape.Id);
+            }
+        }
+    }
+
+    
+
+    private void changeNexus()
+    {
+        if(!lastSelectedShape)
+        {
+            // just to be safe, if we don't have a last selected shape,
+            // the nexus button hides itself
+            return;
+        }
+
+        if(lastSelectedShape.HasNexus())
+        {
+            lastSelectedShape.RemoveRootCloud();
+            
+            return;
+        }
+        // lastSelected Shape has no nexus
+        
+        // test if it's the only one:
+
+        if(shapes.Count <= 1)
+        {
+            // make the magnet button disappear: already taken care of by its own button script
+            return;
+        }
+        
+        // we automatically add the lastSelectedShape's nexus to the previous shape in the shapes array
+        // i.e.: previous shape is root for selected shape
+        // so, we need to test if it's the first item in the list.
+        int selectedIndex = shapes.FindIndex(0, shapes.Count(), s => s.Equals(lastSelectedShape));
+        if(selectedIndex == 0)
+        {
+            return;
+        }
+        // if it's not we're in the clear to add a nexus
+        lastSelectedShape.AddNexus(shapes[selectedIndex - 1].Id);
+
+    }
+    #endregion
+    
+    
     protected static void OnChangedShapeSelection(Changed<NetworkedShapeManager> changed)
     {
         changed.LoadNew();
@@ -279,6 +347,8 @@ public class NetworkedShapeManager : NetworkBehaviour
             instantiateShapeOverNetwork((int)ShapeType.Cube);
 
         }
+
+        // removing shapes
         /// 3
         if(input.Buttons.IsSet(NetworkedBoardButtons.RemoveLast))
         {
@@ -289,15 +359,6 @@ public class NetworkedShapeManager : NetworkBehaviour
         {
             removeAll();
         }
-        /// 5
-        if(input.Buttons.IsSet(NetworkedBoardButtons.Split))
-        {
-
-            if(lastSelectedShape)
-            {
-                splitShape();
-            }
-        }
         
         // host monitor status
         if(Runner.IsServer && networkObject.HasInputAuthority)
@@ -307,35 +368,55 @@ public class NetworkedShapeManager : NetworkBehaviour
                 lastSelectedShape == null ? "none" : lastSelectedShape.Type.ToString() + lastSelectedShape.GetIdentifierTextContent(),
                 selectionDuration == originalSelectionDuration ? "full" : selectionDuration
             );
+
         }
 
-    
-        if(lastSelectedShape)
+        if(!lastSelectedShape)
         {
-			if(networkObject.HasInputAuthority)
-			{
-				selectionDuration -= Time.deltaTime;
-				if(selectionDuration <= 0.0f)
-				{
-					// forget about shape
-					lastSelectedShape = null;
-					selectionDuration = originalSelectionDuration;
-                    return;
-				}
+            // if at this point we don't have a selection, we can return
+            return;
+        }
 
-                if(!input.InputText.Equals(lastSelectedShape.ActiveFaceTextString))
-                {
-                    lastSelectedShape.ActiveFaceTextString = input.InputText;
-                }
-			}
+        // only host stuff
+        if(networkObject.HasInputAuthority)
+        {
+            selectionDuration -= Time.deltaTime;
+            if(selectionDuration <= 0.0f)
+            {
+                // forget about shape
+                lastSelectedShape = null;
+                selectionDuration = originalSelectionDuration;
+                return;
+            }
+            // text
+            if(!input.InputText.Equals(lastSelectedShape.ActiveFaceTextString))
+            {
+                lastSelectedShape.ActiveFaceTextString = input.InputText;
+            }
+            // color
             if(!input.SelectedShapeColor.Equals(lastColor))
             {
                 lastColor = input.SelectedShapeColor;
                 lastSelectedShape.LastSetColor = lastColor;
             }
 
+            // nexus button monitoring
+            nexusButton.Switch(lastSelectedShape.HasNexus());
+            
         }
 
+        // these buttons require a lastSelectedShape
+        /// 5
+        if(input.Buttons.IsSet(NetworkedBoardButtons.Split))
+        {
+            splitShape();
+            
+        }
+        /// 6
+        if(input.Buttons.IsSet(NetworkedBoardButtons.Nexus))
+        {
+            changeNexus();
+        }
         
     }
 

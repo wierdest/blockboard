@@ -17,10 +17,11 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     // keeps track of networked players
     private Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>(); 
 
-    // manages user interface
+    // manages the part of user interface which is networked
     [SerializeField] private GameObject simpleLobbyInterface, hostInterface, clientInterface;
     [SerializeField] private TMPro.TMP_InputField sessionNameInputField;
     [SerializeField] private TMPro.TMP_Text lobbyWarningText, hostStatusText, clientStatusText, networkedShapeManagerStatus;
+    [SerializeField] private SwitchButton nexusButton;
     private readonly string hostStatusTemplate = "hosting {0}  to:  {1} user{2}";
 
     // activates our input provider on connection
@@ -129,13 +130,16 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
         if(runner.IsServer)
         {
-
             NetworkObject networkPlayerObject = runner.Spawn(
                 playerPrefab, Vector3.zero, 
                 Quaternion.identity, 
                 player,
                 (runner, o) => {
-                    o.GetComponent<NetworkedShapeManager>().OnInit(networkedShapeManagerStatus);
+                    // initialize data and connects some of the networked UI
+                    o.GetComponent<NetworkedShapeManager>().OnInit(
+                        networkedShapeManagerStatus,
+                        nexusButton
+                    );
                 }
             );
      

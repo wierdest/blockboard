@@ -370,7 +370,7 @@ public class NetworkedShape : NetworkBehaviour
         }
     }
 
-    public void RemoveRootCloud(GameObject testRoot)
+    public void RemoveRootCloud(NetworkBehaviourId id)
     {
         if(TryGetComponent<NetworkedNexus>(out nexus))
         {
@@ -378,30 +378,22 @@ public class NetworkedShape : NetworkBehaviour
             {
                 return;
             }
-            if(nexus.Root.Equals(testRoot))
+            if(nexus.RootNetworkBehaviourId.Equals(id))
             {
-                nexus.Deactivate();
-                nexus.Root = null;
+                nexus.DeactivateAndSetRootToNull();
                 // Debug.LogFormat("Shape: {0} is free from root cloud {1}", name, testRoot.name);
             }
         }
     }
 
-    public void AddNexus(GameObject root)
+    public void AddNexus(NetworkBehaviourId rootId)
     {
-        if(root == null)
+        if(nexus.RootNetworkBehaviourId.Equals(rootId))
         {
-            Debug.Log("ROOT TO ADD IS NULL!");
+            nexus.Reload();
             return;
         }
-        if(nexus.Root == null)
-        {
-            Debug.Log("ROOT TO ADD IS NULL!");
-            nexus.Root = new GameObject();
-            
-        }
-        nexus.Root = root;
-        nexus.Activate();
+        nexus.RootNetworkBehaviourId = rootId;
     }
 
     public bool HasNexus()

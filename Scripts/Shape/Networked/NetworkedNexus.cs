@@ -4,10 +4,45 @@ using UnityEngine;
 public class NetworkedNexus : NetworkBehaviour
 {
     // the bond between shapes
+    [Networked(OnChanged=nameof(OnChangedRoot))] public NetworkBehaviourId RootNetworkBehaviourId {get; set;}
+    private NetworkBehaviourId? lastRootId;
     public GameObject Root;
     [SerializeField] private Vector3 offset;
     [SerializeField] private float speed;
     private bool isOn;
+
+    protected static void OnChangedRoot(Changed<NetworkedNexus> changed)
+    {
+        Debug.Log("Hey There!");
+        changed.LoadNew();
+        var newRoot = changed.Behaviour.RootNetworkBehaviourId;
+        changed.Behaviour.setRootOverNetwork(newRoot);
+        
+    }
+    private void setRootOverNetwork(NetworkBehaviourId id)
+    {
+        NetworkedShape netRoot;
+        if(Runner.TryFindBehaviour<NetworkedShape>(id, out netRoot))
+        {
+            Debug.Log("found");
+            Root = netRoot.gameObject;
+            
+            Activate();
+        }
+        else
+        {
+            // null
+            Debug.LogFormat("NetworkedNexus of {0} couldn't find Root!", gameObject.name);
+            Deactivate();
+        }
+
+    }
+
+    public void Reload()
+    {
+        setRootOverNetwork(RootNetworkBehaviourId);
+    }
+
 
     public void Activate()
     {
@@ -24,6 +59,11 @@ public class NetworkedNexus : NetworkBehaviour
     public void Deactivate()
     {
         isOn = false;
+    }
+    public void DeactivateAndSetRootToNull()
+    {
+        isOn = false;
+        Root = null;
     }
 
     public override void FixedUpdateNetwork()

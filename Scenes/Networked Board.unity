@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.5057729, g: 0.5541993, b: 0.5801272, a: 1}
+  m_IndirectSpecularColor: {r: 0.50592005, g: 0.5542587, b: 0.5802098, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -418,6 +418,7 @@ MonoBehaviour:
   hostStatusText: {fileID: 1857897794}
   clientStatusText: {fileID: 339652570}
   networkedShapeManagerStatus: {fileID: 1012053932}
+  nexusButton: {fileID: 1566413291}
   networkInputProvider: {fileID: 1999384508}
 --- !u!4 &24936834
 Transform:
@@ -5881,8 +5882,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 484921828}
-        m_TargetAssemblyTypeName: ShapeManager, Assembly-CSharp
+      - m_Target: {fileID: 1999384508}
+        m_TargetAssemblyTypeName: InputProvider, Assembly-CSharp
         m_MethodName: OnClickNexusButton
         m_Mode: 1
         m_Arguments:
@@ -5940,13 +5941,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1566413286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01fbb9b4b82a5d081a8d41e03e8b0c50, type: 3}
+  m_Script: {fileID: 11500000, guid: ecd191c9fd9ce175a906d503b54282d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   off: {fileID: 21300000, guid: d891aec9cb8a5f53389d0353b0d59b7a, type: 3}
   on: {fileID: 21300000, guid: 5967171d806e8c19d9b9c26d9b8a5a5d, type: 3}
   buttonImage: {fileID: 1566413289}
-  shapeManager: {fileID: 484921828}
 --- !u!1 &1622438899
 GameObject:
   m_ObjectHideFlags: 0
