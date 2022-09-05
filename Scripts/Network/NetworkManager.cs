@@ -4,12 +4,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     // fusion's network runner
-    [SerializeField] private NetworkRunner runner;
+    [SerializeField] private NetworkRunner thisRunner;
 
     // our player prefab does not have a body yet
     [SerializeField] private NetworkPrefabRef playerPrefab;
@@ -18,14 +19,21 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>(); 
 
     // manages the part of user interface which is networked
-    [SerializeField] private GameObject simpleLobbyInterface, hostInterface, clientInterface;
+    [SerializeField] private GameObject simpleLobbyInterface, hostInterface, clientInterface, hostOfflineConfirmationUI, clientOfflineConfirmationUI;
     [SerializeField] private TMPro.TMP_InputField sessionNameInputField;
     [SerializeField] private TMPro.TMP_Text lobbyWarningText, hostStatusText, clientStatusText, networkedShapeManagerStatus;
     [SerializeField] private SwitchButton nexusButton;
-    private readonly string hostStatusTemplate = "hosting {0}  to:  {1} user{2}";
-
+    [SerializeField] private ConfirmationButton offlineButton;
+    private string hostStatusTemplate = "hosting {0}  to:  {1} user{2}";
+    private string positiveLobby = "All good! We're online!";
+    private string negativeLobby = "Failed to connect to the network!\n Reason: {0}";
+   
     // activates our input provider on connection
     [SerializeField] private InputProvider networkInputProvider;
+
+    // upon player instantiation, we pass in the category manager to the networked shape manager
+    [SerializeField] private CatManager catManager;
+    [SerializeField] private CatButton catButton;
 
 
     #region LOBBY INTERFACE
@@ -41,22 +49,25 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnClickBackButton()
     {
-        if(runner)
+        Time.timeScale = 1.0f;
+        if(thisRunner)
         {
-            runner.Shutdown();
+            thisRunner.Shutdown();
+            return;
         }
         SceneManager.LoadScene(0);
+        
     }
     #endregion
 
     private async void startGame(GameMode mode, string roomName)
     {
-		if(runner == null)
+		if(thisRunner == null)
 		{
-			runner = gameObject.AddComponent<NetworkRunner>();
-			runner.ProvideInput = true;
+			thisRunner = gameObject.AddComponent<NetworkRunner>();
+			thisRunner.ProvideInput = true;
 
-			var result = await runner.StartGame(new StartGameArgs() 
+			var result = await thisRunner.StartGame(new StartGameArgs() 
 			{
 				GameMode  = mode,
 				SessionName = string.IsNullOrEmpty(roomName) ? "Common Room" : roomName,
@@ -67,62 +78,64 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 			if(result.Ok)
 			{
 				// all good
-				lobbyWarningText.text = "All good! We're online!";
+				lobbyWarningText.text = positiveLobby;
 				// load proper user interface for the scene 
 				StartCoroutine(waitToLoadHostOrClientInterface());
                 // activates our input provider
                 networkInputProvider.enabled = true; 
-
 			}
-			else
-			{
-				lobbyWarningText.text = "Couldn't start Network Session! Going back to Offline Start Board!";
-				SceneManager.LoadScene(0);
-			}
-
+            else
+            {
+                lobbyWarningText.text = string.Format(negativeLobby, result.ShutdownReason);
+            }
 		}
 
     }
     private IEnumerator waitToLoadHostOrClientInterface()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.8f);
 
         simpleLobbyInterface.SetActive(false);
+        offlineButton.gameObject.SetActive(true);
 
-        if(runner.IsServer)
+        if(thisRunner.IsServer)
         {
             hostInterface.SetActive(true);
+            offlineButton.SetConfirmationUI(hostOfflineConfirmationUI);
             yield return null;
         }
 
-        if(runner.IsClient)
+        if(thisRunner.IsClient)
         {
             clientInterface.SetActive(true);
+            offlineButton.SetConfirmationUI(clientOfflineConfirmationUI);
+
+            // temporary
             Destroy(ClickAndDrag.Instance.gameObject);
             yield return null;
         }
         
     }
-
     private void Update()
     {
         // update interface
-        if(runner != null)
+        if(thisRunner != null)
         {
-            if(runner.IsServer)
+            if(thisRunner.IsServer)
             {
                 var count = spawnedPlayers.Count;
                 hostStatusText.text = string.Format(
                     hostStatusTemplate,
-                    runner.SessionInfo.Name,
+                    thisRunner.SessionInfo.Name,
                     count - 1,
                     count - 1 > 1 ? "s" : ""
                 );
 
             }
+
+
         }
     }
-
     #region RUNNER CALLBACKS
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) 
@@ -136,10 +149,14 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
                 player,
                 (runner, o) => {
                     // initialize data and connects some of the networked UI
-                    o.GetComponent<NetworkedShapeManager>().OnInit(
+                    var shapeManager = o.GetComponent<NetworkedShapeManager>();
+                    shapeManager.OnInit(
                         networkedShapeManagerStatus,
-                        nexusButton
+                        nexusButton,
+                        catManager
                     );
+                    catButton.SetNetworkedShapeManager(shapeManager);
+                    
                 }
             );
      
@@ -177,12 +194,27 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) 
     {
         Debug.LogFormat("NetworkManager OnShutdown with reason {0}!", shutdownReason);
-        Destroy(runner);
+        if(shutdownReason == ShutdownReason.Ok)
+        {
+            SceneManager.LoadScene(0);
+
+            if(thisRunner)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
     public void OnConnectedToServer(NetworkRunner runner) { }
-    public void OnDisconnectedFromServer(NetworkRunner runner) { }
+    public void OnDisconnectedFromServer(NetworkRunner runner) 
+    {
+        Debug.Log("Network Manager: OnDisconnectedFromServer");
+
+    }
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
-    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
+    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) 
+    { 
+        Debug.Log("Network Manager: OnConnectFailed");
+    }
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }

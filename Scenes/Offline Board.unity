@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.5059841, g: 0.55430543, b: 0.58021873, a: 1}
+  m_IndirectSpecularColor: {r: 0.50611615, g: 0.55436283, b: 0.5802621, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1139,7 +1139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6864984070219192484, guid: 64c6be4119adc02efb7d92c36405d2cb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickNopeButton
+      value: OnClickNegativeButton
       objectReference: {fileID: 0}
     - target: {fileID: 7234881500445504261, guid: 64c6be4119adc02efb7d92c36405d2cb, type: 3}
       propertyPath: m_AnchorMax.y

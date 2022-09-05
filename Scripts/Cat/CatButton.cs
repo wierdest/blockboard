@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CatButton : MonoBehaviour
 {
     [SerializeField] private Image image;
     [SerializeField] private ColorPicker colorPicker;
     [SerializeField] private SoundPlayer soundPlayer;
-    [SerializeField] private ShapeManager shapeManager;
+    [SerializeField] private ShapeManager offlineShapeManager;
+    [SerializeField] private NetworkedShapeManager networkedShapeManager;
 
     // long click removes category
     [SerializeField] private float clickDuration = 1.2f;
@@ -24,6 +26,10 @@ public class CatButton : MonoBehaviour
             image.color = (Color32)colorPicker.Color;
         }
         
+    }
+    public void SetNetworkedShapeManager(NetworkedShapeManager manager)
+    {
+        networkedShapeManager = manager;
     }
     private void checkClick()
     {
@@ -55,18 +61,31 @@ public class CatButton : MonoBehaviour
         {
             Debug.Log("CatButton: Long click!");
             // remove category
-            shapeManager.RemoveLastSelectedShapeCategory();
+            offlineShapeManager.RemoveLastSelectedShapeCategory();
             longClick = false;
             return;
         }
         Debug.Log("CatButton: Short click!");
-        // make & add category 
-        shapeManager.MakeLastSelectedShapeCatForm();
         // color the cat & the color picker with the active face's color
-        var currentColor = shapeManager.GetLastSelectedShapeColor();
+        
+       
+        Color currentColor;
+        // make & add category
+        if(SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            offlineShapeManager.MakeLastSelectedShapeCatForm();
+            currentColor = (Color)offlineShapeManager.GetLastSelectedShapeColor();
+        }
+        else
+        {
+            networkedShapeManager.MakeLastSelectedShapeCatForm();
+            currentColor = (Color)networkedShapeManager.GetLastSelectedShapeColor();
+        }
+        
         if(currentColor != null)
         {
-            colorPicker.Color = (Color)currentColor;
+            colorPicker.Color = currentColor;
         }
+        
     }
 }

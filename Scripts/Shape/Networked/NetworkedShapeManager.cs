@@ -46,7 +46,12 @@ public class NetworkedShapeManager : NetworkBehaviour
     // the nexus button monitors the selected shapes's nexus existence
     [SerializeField] private SwitchButton nexusButton;
 
-    public void OnInit(TMPro.TMP_Text tmpText, SwitchButton switchButton)
+    // category stuff & printer stuff is offline at present
+    
+    [SerializeField] private CatManager catManager;
+    private bool hasCatToGive;
+
+    public void OnInit(TMPro.TMP_Text tmpText, SwitchButton switchButton, CatManager sceneCatManager)
     {
         cameraController = Camera.main.GetComponent<CameraController>();
         originalSelectionDuration = selectionDuration;
@@ -54,6 +59,7 @@ public class NetworkedShapeManager : NetworkBehaviour
         networkObject = GetComponent<NetworkObject>();
         statusText = tmpText;
         nexusButton = switchButton;
+        catManager = sceneCatManager;
         
     }
 
@@ -231,7 +237,6 @@ public class NetworkedShapeManager : NetworkBehaviour
 
     #endregion
 
-    
     #region NEXUS
 
     private void removeAllNexusToSelectedPiece()
@@ -287,6 +292,74 @@ public class NetworkedShapeManager : NetworkBehaviour
     #endregion
     
     
+    #region CAT
+    public Color? GetLastSelectedShapeColor()
+    {
+        if(!lastSelectedShape)
+        {
+            return null;
+        }
+        return lastSelectedShape.GetCurrentFaceColor();
+    }
+
+    public void MakeLastSelectedShapeCatForm()
+    {
+        if(lastSelectedShape)
+        {
+            lastSelectedShape.MakeACatOutOfMe();
+            hasCatToGive = true;
+            return;
+        }
+        Debug.Log("Shape Manager: can't do anything like that without a selected shape!");
+
+    }
+
+    public void RemoveLastSelectedShapeCategory()
+    {
+        if(lastSelectedShape)
+        {
+            removeCatFormFromCatManager();
+            lastSelectedShape.RemoveCatForm();
+            return;
+        }
+        Debug.Log("Networked Shape Manager: can't do anything like that without a selected shape!");
+    }
+
+    private void addCatFormToCatManager()
+    {
+        if(!lastSelectedShape)
+        {
+            return;
+        }
+        var cat = lastSelectedShape.GetCatForm();
+        catManager.AddCategory(cat);
+        hasCatToGive = false;
+        Debug.LogFormat("Networked Shape Manager: tried adding cat {0} to shape {1}!", cat.name, lastSelectedShape.name);
+  
+    }
+
+    private void removeCatFormFromCatManager()
+    {
+        var cat = lastSelectedShape.GetCatForm();
+        catManager.RemoveCategory(cat);
+        Debug.LogFormat("Networked Shape Manager: removed cat {0} from shape {1}!", cat.name, lastSelectedShape.name);
+    }
+
+        
+
+    public Category GetLastSelectedShapeCatForm()
+    {
+        if(lastSelectedShape)
+        {
+            return lastSelectedShape.GetCatForm();
+        }
+        Debug.Log("Networked Shape Manager: can't do anything like that without a selected shape!");
+        return null;
+    }
+    #endregion
+
+
+
     protected static void OnChangedShapeSelection(Changed<NetworkedShapeManager> changed)
     {
         changed.LoadNew();
@@ -402,6 +475,11 @@ public class NetworkedShapeManager : NetworkBehaviour
 
             // nexus button monitoring
             nexusButton.Switch(lastSelectedShape.HasNexus());
+
+            if(hasCatToGive)
+            {
+                addCatFormToCatManager();
+            }
             
         }
 

@@ -13,7 +13,6 @@ public class NetworkedNexus : NetworkBehaviour
 
     protected static void OnChangedRoot(Changed<NetworkedNexus> changed)
     {
-        Debug.Log("Hey There!");
         changed.LoadNew();
         var newRoot = changed.Behaviour.RootNetworkBehaviourId;
         changed.Behaviour.setRootOverNetwork(newRoot);
@@ -24,9 +23,7 @@ public class NetworkedNexus : NetworkBehaviour
         NetworkedShape netRoot;
         if(Runner.TryFindBehaviour<NetworkedShape>(id, out netRoot))
         {
-            Debug.Log("found");
             Root = netRoot.gameObject;
-            
             Activate();
         }
         else
