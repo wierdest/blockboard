@@ -2646,7 +2646,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 2
-  m_Spacing: 30
+  m_Spacing: 10
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -5061,7 +5061,8 @@ MonoBehaviour:
   image: {fileID: 7497533587097857182}
   colorPicker: {fileID: 7628988484081175657}
   soundPlayer: {fileID: 0}
-  shapeManager: {fileID: 0}
+  offlineShapeManager: {fileID: 0}
+  networkedShapeManager: {fileID: 0}
   clickDuration: 1.2
 --- !u!1 &7497533587110311764
 GameObject:

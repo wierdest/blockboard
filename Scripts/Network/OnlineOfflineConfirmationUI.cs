@@ -15,7 +15,10 @@ public class OnlineOfflineConfirmationUI : MonoBehaviour
         if(activeScene == 1)
         {
             var runner = FindObjectOfType<NetworkRunner>();
-            runner.Shutdown();
+            if(runner)
+            {
+                runner.Shutdown();
+            }
             return;
         }
         

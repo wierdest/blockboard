@@ -1,5 +1,7 @@
 using Fusion;
 using Fusion.Sockets;
+using Photon.Voice.Fusion;
+using Photon.Voice.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     // fusion's network runner
     [SerializeField] private NetworkRunner thisRunner;
-
+    
     // our player prefab does not have a body yet
     [SerializeField] private NetworkPrefabRef playerPrefab;
 
@@ -33,6 +35,15 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     // upon player instantiation, we pass in the category manager to the networked shape manager
     [SerializeField] private CatManager catManager;
     [SerializeField] private CatButton catButton;
+
+    /// voice stuff
+
+    // Photon Voice Connection
+    [SerializeField] private VoiceConnection voiceConnection;
+    // Recorder
+    [SerializeField] private Recorder primaryRecorder;
+    // Mic Button
+    [SerializeField] private SwitchButton micButton;
 
 
     #region LOBBY INTERFACE
@@ -59,36 +70,40 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     }
     #endregion
 
+    // mic button
+    public void OnClickMicButton()
+    {
+        primaryRecorder.TransmitEnabled = !primaryRecorder.TransmitEnabled;
+        micButton.Switch(primaryRecorder.TransmitEnabled);
+        
+    }
+
     private async void startGame(GameMode mode, string roomName)
     {
-		if(thisRunner == null)
-		{
-			thisRunner = gameObject.AddComponent<NetworkRunner>();
-			thisRunner.ProvideInput = true;
+        thisRunner.ProvideInput = true;
+        
+        var result = await thisRunner.StartGame(new StartGameArgs() 
+        {
+            GameMode  = mode,
+            SessionName = string.IsNullOrEmpty(roomName) ? "Common Room" : roomName,
+            Scene = SceneManager.GetActiveScene().buildIndex,
+            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+        });
 
-			var result = await thisRunner.StartGame(new StartGameArgs() 
-			{
-				GameMode  = mode,
-				SessionName = string.IsNullOrEmpty(roomName) ? "Common Room" : roomName,
-				Scene = SceneManager.GetActiveScene().buildIndex,
-				SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-			});
-
-			if(result.Ok)
-			{
-				// all good
-				lobbyWarningText.text = positiveLobby;
-				// load proper user interface for the scene 
-				StartCoroutine(waitToLoadHostOrClientInterface());
-                // activates our input provider
-                networkInputProvider.enabled = true; 
-			}
-            else
-            {
-                lobbyWarningText.text = string.Format(negativeLobby, result.ShutdownReason);
-            }
-		}
-
+        if(result.Ok)
+        {
+            // all good
+            lobbyWarningText.text = positiveLobby;
+            // load proper user interface for the scene 
+            StartCoroutine(waitToLoadHostOrClientInterface());
+            // activates our input provider
+            networkInputProvider.enabled = true;
+            
+        }
+        else
+        {
+            lobbyWarningText.text = string.Format(negativeLobby, result.ShutdownReason);
+        }
     }
     private IEnumerator waitToLoadHostOrClientInterface()
     {
@@ -114,6 +129,11 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             yield return null;
         }
         
+    }
+
+    private void Awake()
+    {
+        primaryRecorder = voiceConnection.PrimaryRecorder;
     }
     private void Update()
     {
