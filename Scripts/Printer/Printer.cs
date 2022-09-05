@@ -28,11 +28,11 @@ public abstract class Printer : MonoBehaviour
     public abstract string BuildInstructionString();
     public abstract string BuildPreviewString();
 
-    private void Awake()
+    private void Start()
     {
         Instructions = BuildInstructionString();
         Preview = BuildPreviewString();
-        Debug.LogFormat("Printer: {0} created instructions string {1} and preview string {2}", name, Instructions, Preview);
+        Debug.LogFormat("Printer: {0} Awake"!);
     }
 
     public void PrintTestMessage()

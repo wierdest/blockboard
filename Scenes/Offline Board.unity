@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.50611615, g: 0.55436283, b: 0.5802621, a: 1}
+  m_IndirectSpecularColor: {r: 0.5059258, g: 0.5542627, b: 0.5802107, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -156,6 +156,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16fcff756e03dd05da2de557d85f7773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!82 &393120526 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 5240358503888598578, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+  m_PrefabInstance: {fileID: 5240358504053302229}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &484921828 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9011203280677065245, guid: 59046dc5f68f14c48a46e86c52088e11, type: 3}
@@ -525,6 +530,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 195766680967760147, guid: 91e635014f01ebaecb692d96c3d1989c, type: 3}
+      propertyPath: sensitivity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 195766680967760151, guid: 91e635014f01ebaecb692d96c3d1989c, type: 3}
       propertyPath: m_Name
       value: Board Camera
@@ -673,9 +682,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2065300721266088130, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
+      propertyPath: sky
+      value: 
+      objectReference: {fileID: 2100000, guid: 8f1796a9694e5a18abc68fbdf47f76e0, type: 2}
+    - target: {fileID: 2065300721266088130, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
       propertyPath: sun
       value: 
       objectReference: {fileID: 705507995}
+    - target: {fileID: 2065300721266088130, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
+      propertyPath: speed
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2065300721266088131, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -801,6 +818,10 @@ PrefabInstance:
       propertyPath: settingsInterface
       value: 
       objectReference: {fileID: 1479444027}
+    - target: {fileID: 3588116979597491964, guid: 78461813d95b9618fbce29683ed83576, type: 3}
+      propertyPath: printers.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3588116979744112744, guid: 78461813d95b9618fbce29683ed83576, type: 3}
       propertyPath: CatManager
       value: 
@@ -867,9 +888,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+      propertyPath: buttonOn
+      value: 
+      objectReference: {fileID: 21300000, guid: 6c30e4d35112d327dbbb91ee6314c10c, type: 3}
+    - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+      propertyPath: buttonOff
+      value: 
+      objectReference: {fileID: 21300000, guid: d2e105d37f54606449b83536fa85c94f, type: 3}
+    - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
       propertyPath: buttonImage
       value: 
       objectReference: {fileID: 1099602294}
+    - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+      propertyPath: currentTrack
+      value: 
+      objectReference: {fileID: 393120526}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
 --- !u!1001 &6765875422056406174

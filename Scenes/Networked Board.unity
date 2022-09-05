@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.5059329, g: 0.554259, b: 0.5802012, a: 1}
+  m_IndirectSpecularColor: {r: 0.5057626, g: 0.5542125, b: 0.5801355, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3890,6 +3890,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 972134420}
   m_CullTransparentMesh: 1
+--- !u!82 &972183624 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 5240358503888598578, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+  m_PrefabInstance: {fileID: 5240358504053302229}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &973448725
 GameObject:
   m_ObjectHideFlags: 0
@@ -9392,6 +9397,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 195766680967760147, guid: 91e635014f01ebaecb692d96c3d1989c, type: 3}
+      propertyPath: sensitivity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 195766680967760151, guid: 91e635014f01ebaecb692d96c3d1989c, type: 3}
       propertyPath: m_Name
       value: Board Camera
@@ -9570,9 +9579,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2065300721266088130, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
+      propertyPath: sky
+      value: 
+      objectReference: {fileID: 2100000, guid: 8f1796a9694e5a18abc68fbdf47f76e0, type: 2}
+    - target: {fileID: 2065300721266088130, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
       propertyPath: sun
       value: 
       objectReference: {fileID: 705507995}
+    - target: {fileID: 2065300721266088130, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
+      propertyPath: speed
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2065300721266088131, guid: f06395e142cc0aa33bef6815163f3c8e, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -9860,9 +9877,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+      propertyPath: buttonOn
+      value: 
+      objectReference: {fileID: 21300000, guid: 6c30e4d35112d327dbbb91ee6314c10c, type: 3}
+    - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+      propertyPath: buttonOff
+      value: 
+      objectReference: {fileID: 21300000, guid: d2e105d37f54606449b83536fa85c94f, type: 3}
+    - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
       propertyPath: buttonImage
       value: 
       objectReference: {fileID: 1099602294}
+    - target: {fileID: 5240358503270241117, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
+      propertyPath: currentTrack
+      value: 
+      objectReference: {fileID: 972183624}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb22d8670637f5e99bd52b868879a999, type: 3}
 --- !u!222 &6644299959154046265
@@ -9953,6 +9982,14 @@ PrefabInstance:
     - target: {fileID: 6843490908534263265, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: m_Name
       value: Click And Drag
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843490908534263270, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
+      propertyPath: forgetOffset
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843490908534263270, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
+      propertyPath: rotationCountLimit
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6843490908534263270, guid: 1dba8e8a4341da6988fcad336dfffdbf, type: 3}
       propertyPath: networkInputProvider
