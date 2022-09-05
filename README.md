@@ -2,7 +2,7 @@
 
 # BLOCK-BOARD
 
-version: 0.1 alpha as of 07/08/22.
+version: 0.3 alpha as of 04/09/22.
 
 # DESCRIPTION
 
