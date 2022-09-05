@@ -47,7 +47,7 @@ public class ShapeManager : MonoBehaviour
     {
         shapes = new List<Shape>();
         shapes = Transform.FindObjectsOfType<Shape>().ToList();
-        Debug.LogFormat("Shape Manager Awake: found {0} initial shapes to work with! Good luck!", shapes.Count);
+        // Debug.LogFormat("Shape Manager Awake: found {0} initial shapes to work with! Good luck!", shapes.Count);
         originalSelectionDuration = selectionDuration;
         originalSplitWidth = splitWidth;
     }

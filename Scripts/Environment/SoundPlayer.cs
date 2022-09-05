@@ -49,7 +49,7 @@ public class SoundPlayer : MonoBehaviour
             hasUpdatedTrack = true;
             currentTrack.Play();
 
-            Debug.LogFormat("SoundPlayer: PlayCount {0} Now playin'  {1}!", playCount, currentTrack.clip.name);
+            // Debug.LogFormat("SoundPlayer: PlayCount {0} Now playin'  {1}!", playCount, currentTrack.clip.name);
 
         }
         if(hasUpdatedTrack && currentTrack.isPlaying)

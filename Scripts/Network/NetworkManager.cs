@@ -60,13 +60,8 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnClickBackButton()
     {
         Time.timeScale = 1.0f;
-        if(thisRunner)
-        {
-            thisRunner.Shutdown();
-            return;
-        }
+        thisRunner.Shutdown();
         SceneManager.LoadScene(0);
-        
     }
     #endregion
 
@@ -179,13 +174,13 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
                 }
             );
      
-            Debug.Log("Spawning Server");
+            // Debug.Log("Spawning Server");
             spawnedPlayers.Add(player, networkPlayerObject);
-            var count = spawnedPlayers.Count;
-            if(count > 1)
-            {
-                Debug.LogFormat("A Player joined our game! Now we're {0} players!", count);
-            }
+            // var count = spawnedPlayers.Count;
+            // if(count > 1)
+            // {
+            //     Debug.LogFormat("A Player joined our game! Now we're {0} players!", count);
+            // }
         }
 
         if(runner.IsClient)
@@ -215,8 +210,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         Debug.LogFormat("NetworkManager OnShutdown with reason {0}!", shutdownReason);
         if(shutdownReason == ShutdownReason.Ok)
         {
-            SceneManager.LoadScene(0);
-
             if(thisRunner)
             {
                 Destroy(gameObject);

@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class OnlineOfflineConfirmationUI : MonoBehaviour
 {
-
    public void OnClickAffirmativeButton()
    {
 	

@@ -7,6 +7,7 @@ public class SkyAndSunRotation : MonoBehaviour
     [SerializeField] private Material sky;
     [SerializeField] private Transform sun;
     [SerializeField] private float speed;
+    private Vector3 originalSunPosition;
     private Quaternion originalSunRotation;
     private float originalSkyRotation, skyRate;
     private bool hasReset;
@@ -15,6 +16,8 @@ public class SkyAndSunRotation : MonoBehaviour
     {
         originalSkyRotation = sky.GetFloat("_Rotation");
         originalSunRotation = sun.transform.rotation;
+        originalSunPosition = sun.transform.position;
+        reset();
     }
 
 
@@ -45,6 +48,6 @@ public class SkyAndSunRotation : MonoBehaviour
     {
         skyRate = 0f;
         sky.SetFloat("_Rotation", skyRate);
-        sun.SetPositionAndRotation(sun.transform.position, originalSunRotation);
+        sun.SetPositionAndRotation(originalSunPosition, originalSunRotation);
     }
 }

@@ -23,7 +23,7 @@ public class PrinterManager : MonoBehaviour
             return;
         }
 
-        Debug.LogFormat("Printer Manager has found {0} printers. {1} is current.", printers.Count, printers[0].name);
+        // Debug.LogFormat("Printer Manager has found {0} printers. {1} is current.", printers.Count, printers[0].name);
         
         // set current printer and its appropriate 
         currentPrinter = printers[0];
@@ -80,7 +80,7 @@ public class PrinterManager : MonoBehaviour
     {
         // sets the click listener programmatically 
         printButton.onClick.AddListener(currentPrinter.OnClickPrintButton);
-        Debug.Log("Tried updating printButton on click!");
+        // Debug.Log("Tried updating printButton on click!");
     }
 
     private void updateDropdownOptions()

@@ -32,7 +32,7 @@ public abstract class Printer : MonoBehaviour
     {
         Instructions = BuildInstructionString();
         Preview = BuildPreviewString();
-        Debug.LogFormat("Printer: {0} Awake", name);
+        // Debug.LogFormat("Printer: {0} Start with Instructions {1}", name, Instructions);
     }
 
     public void PrintTestMessage()

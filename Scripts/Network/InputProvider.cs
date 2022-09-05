@@ -29,7 +29,7 @@ public class InputProvider : SimulationBehaviour, INetworkRunnerCallbacks
         runner = FindObjectOfType<NetworkRunner>();
         if(runner != null)
         {
-            Debug.Log("Input Provider: Adding callbacks!");
+            // Debug.Log("Input Provider: Adding callbacks!");
             runner.AddCallbacks(this);
         }
 
