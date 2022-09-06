@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.5059859, g: 0.55429655, b: 0.58023155, a: 1}
+  m_IndirectSpecularColor: {r: 0.506011, g: 0.5543172, b: 0.58022636, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1168,6 +1168,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Networked Board UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5216335731416537718, guid: 68adc977df78184ddb872d0ac703dda1, type: 3}
+      propertyPath: m_text
+      value: Host or Join a room by typing its name. Leave it blank for the "Common
+        Room".
+      objectReference: {fileID: 0}
+    - target: {fileID: 5216335731416537718, guid: 68adc977df78184ddb872d0ac703dda1, type: 3}
+      propertyPath: m_fontSize
+      value: 13.8
+      objectReference: {fileID: 0}
     - target: {fileID: 5216335731416537719, guid: 68adc977df78184ddb872d0ac703dda1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1196,6 +1205,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 155107454}
+    - target: {fileID: 5216335731881545056, guid: 68adc977df78184ddb872d0ac703dda1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5216335731881545058, guid: 68adc977df78184ddb872d0ac703dda1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

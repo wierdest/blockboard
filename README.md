@@ -2,11 +2,13 @@
 
 # BLOCK-BOARD
 
-version: 0.3 alpha as of 04/09/22.
+version: 0.4 alpha as of 05/09/22.
 
 # DESCRIPTION
 
 BLOCK-BOARD is a piece of software that allows the displaying of text attached to shapes in a 3D environment.
+
+Going from Version 0.4 alpha, it also supports hosting  network sessions through Photon Engine's Fusion.
 
 The user can MOVE, COLOR, SPLIT & CATEGORIZE the information as needed.
 
