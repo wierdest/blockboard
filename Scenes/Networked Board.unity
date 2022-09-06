@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.506011, g: 0.5543172, b: 0.58022636, a: 1}
+  m_IndirectSpecularColor: {r: 0.505878, g: 0.55423087, b: 0.5801711, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -610,6 +610,22 @@ PrefabInstance:
       propertyPath: networkedShapeManagerStatus
       value: 
       objectReference: {fileID: 1012053932}
+    - target: {fileID: 822107351868600620, guid: 5ee6b92a95b5e17d28022e766186d3d9, type: 3}
+      propertyPath: autoStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 822107351868600623, guid: 5ee6b92a95b5e17d28022e766186d3d9, type: 3}
+      propertyPath: logLevel
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 822107351868600623, guid: 5ee6b92a95b5e17d28022e766186d3d9, type: 3}
+      propertyPath: globalSpeakersLogLevel
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 822107351868600623, guid: 5ee6b92a95b5e17d28022e766186d3d9, type: 3}
+      propertyPath: globalRecordersLogLevel
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ee6b92a95b5e17d28022e766186d3d9, type: 3}
 --- !u!1001 &1422708803241485950

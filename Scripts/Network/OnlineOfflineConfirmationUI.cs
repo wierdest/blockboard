@@ -8,7 +8,6 @@ public class OnlineOfflineConfirmationUI : MonoBehaviour
 {
    public void OnClickAffirmativeButton()
    {
-	
         int activeScene = SceneManager.GetActiveScene().buildIndex;
         Time.timeScale = 1.0f;
         if(activeScene == 1)

@@ -28,6 +28,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     private string hostStatusTemplate = "hosting {0}  to:  {1} user{2}";
     private string positiveLobby = "All good! We're online!";
     private string negativeLobby = "Failed to connect to the network!\n Reason: {0}";
+    private readonly string waitLobby = "Connecting...";
    
     // activates our input provider on connection
     [SerializeField] private InputProvider networkInputProvider;
@@ -76,7 +77,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     private async void startGame(GameMode mode, string roomName)
     {
         thisRunner.ProvideInput = true;
-        
+        lobbyWarningText.text = waitLobby;
         var result = await thisRunner.StartGame(new StartGameArgs() 
         {
             GameMode  = mode,
@@ -84,6 +85,10 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             Scene = SceneManager.GetActiveScene().buildIndex,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
+
+        
+
+        
 
         if(result.Ok)
         {
@@ -214,6 +219,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             {
                 Destroy(gameObject);
             }
+            SceneManager.LoadScene(0);
         }
     }
     public void OnConnectedToServer(NetworkRunner runner) { }
