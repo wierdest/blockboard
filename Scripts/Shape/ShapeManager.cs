@@ -374,12 +374,13 @@ public class ShapeManager : MonoBehaviour
    
     // the fifth step is to connect the category button & manager for interesting printing purposes ! we're done! :)
     #region CAT
+    // a category can be put in the corpus for later.
 
-    public void MakeLastSelectedShapeCatForm()
+    public void MakeLastSelectedShapeCatForm(bool isCorpus)
     {
         if(lastSelectedShape)
         {
-            lastSelectedShape.MakeACatOutOfMe();
+            lastSelectedShape.MakeACatOutOfMe(isCorpus);
             hasCatToGive = true;
             return;
         }
@@ -404,31 +405,27 @@ public class ShapeManager : MonoBehaviour
         {
             return;
         }
+
         var cat = lastSelectedShape.GetCatForm();
         catManager.AddCategory(cat);
         hasCatToGive = false;
-        Debug.LogFormat("Shape Manager: tried adding cat {0} to shape {1}!", cat.name, lastSelectedShape.name);
+        Debug.LogFormat("Shape Manager: tried adding cat {0} to shape {1}!", cat.Name, lastSelectedShape.name);
   
     }
 
     private void removeCatFormFromCatManager()
     {
         var cat = lastSelectedShape.GetCatForm();
-        catManager.RemoveCategory(cat);
-        Debug.LogFormat("Shape Manager: removed cat {0} from shape {1}!", cat.name, lastSelectedShape.name);
-    }
-
-        
-
-    public Category GetLastSelectedShapeCatForm()
-    {
-        if(lastSelectedShape)
+        if(cat == null)
         {
-            return lastSelectedShape.GetCatForm();
+            Debug.Log("Can't remove a null category!");
+            return;
         }
-        Debug.Log("Shape Manager: can't do anything like that without a selected shape!");
-        return null;
+        catManager.RemoveCategory(cat);
+        Debug.LogFormat("Shape Manager: removed cat {0} from shape {1}!", cat.Name, lastSelectedShape.name);
     }
+
+
     #endregion
 
     // the fifth step is to be able to edit the connection between shapes, the NEXUS

@@ -115,7 +115,7 @@ public class ChooseCatMap : Printer
         {
             var mapItemExamplesString = "";
 
-            foreach(string example in cat.examples)
+            foreach(string example in cat.Examples)
             {
                 var itemExample = string.Format(
                     ChooseCatMapLiterals.CatItemExample,
@@ -129,7 +129,7 @@ public class ChooseCatMap : Printer
             }
             var mapItem = string.Format(
                 ChooseCatMapLiterals.NoColorCatItem,
-                cat.name.ToUpperInvariant(),
+                cat.Name.ToUpperInvariant(),
                 mapItemExamplesString
             );
 
@@ -151,23 +151,23 @@ public class ChooseCatMap : Printer
             choosingMapString,
             string.Format(
                 ChooseCatMapLiterals.ChoosingMapHeader,
-                cat.name.ToUpperInvariant()
+                cat.Name.ToUpperInvariant()
             )
         );
         
-        foreach(string example in cat.examples)
+        foreach(string example in cat.Examples)
         {
             var split  = example.Split(" ");
             foreach(string block in split)
             {
                 string blockString = "";
-                IEnumerable<Category> testArray = CatManager.GetCats().Where(c => c.examples.Contains<string>(block));
+                IEnumerable<Category> testArray = CatManager.GetCats().Where(c => c.Examples.Contains<string>(block));
                 if(testArray.Count() != 0)
                 {
                     // if the word in the example is a category
                     Category catToChoose = testArray.First(); // we take the first we find
                     // get the options we have to choose from
-                    List<string> optionsToChoose = catToChoose.examples;
+                    List<string> optionsToChoose = catToChoose.Examples;
                     // randomly shuffles them
                     optionsToChoose.Shuffle();
                     string optionString = "";

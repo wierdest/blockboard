@@ -61,7 +61,7 @@ public class Shape : MonoBehaviour
         originalMoveSpeed = moveSpeed;
         ActiveTextSplit = new List<string>();
         catForm = new Category();
-        catForm.examples  = new List<string>();
+        catForm.Examples  = new List<string>();
         nexus = GetComponent<Nexus>();
     }
 
@@ -390,7 +390,7 @@ public class Shape : MonoBehaviour
 
     #region CAT
 
-    public void MakeACatOutOfMe()
+    public void MakeACatOutOfMe(bool isCorpus)
     {
         if(!activeFaceText && Type == ShapeType.Pyramid)
         {
@@ -412,32 +412,32 @@ public class Shape : MonoBehaviour
             return;
         }
         catForm = new Category();
-        catForm.name = catName;
-        catForm.color = GetCurrentFaceColor();
-        catForm.examples = new List<string>();
-
+        catForm.Name = catName;
+        catForm.CatColor = GetCurrentFaceColor();
+        catForm.Examples = new List<string>();
+        catForm.IsCorpus = isCorpus;
         // make cat examples out of pyramid ( really??? )
 
         if(Type == ShapeType.Pyramid)
         {
             if(strIsOkForCat(catName, faceTexts[1].text))
             {
-                catForm.examples.Add(faceTexts[1].text);
+                catForm.Examples.Add(faceTexts[1].text);
                 
             }
             if(strIsOkForCat(catName, faceTexts[3].text))
             {
-                catForm.examples.Add(faceTexts[3].text);
+                catForm.Examples.Add(faceTexts[3].text);
                 
             }
             if(strIsOkForCat(catName, faceTexts[2].text))
             {
-                catForm.examples.Add(faceTexts[2].text);
+                catForm.Examples.Add(faceTexts[2].text);
                 
             }
             if(strIsOkForCat(catName, faceTexts[0].text))
             {
-                catForm.examples.Add(faceTexts[0].text);
+                catForm.Examples.Add(faceTexts[0].text);
                 
             }
             return;
@@ -449,7 +449,7 @@ public class Shape : MonoBehaviour
         {
             if(strIsOkForCat(catName, t.text))
             {
-                catForm.examples.Add(t.text);
+                catForm.Examples.Add(t.text);
             }
         }
     }
@@ -463,7 +463,7 @@ public class Shape : MonoBehaviour
     {
         if(catForm == null)
         {
-            MakeACatOutOfMe();
+           Debug.Log("Cat form is null!");
         }
         return catForm;
     }

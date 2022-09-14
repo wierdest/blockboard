@@ -65,7 +65,7 @@ public class NetworkedShape : NetworkBehaviour
         hover.enabled = false;
         ActiveTextSplit = new List<string>();
         catForm = new Category();
-        catForm.examples  = new List<string>();
+        catForm.Examples  = new List<string>();
         nexus = GetComponent<NetworkedNexus>();
 
     }
@@ -427,9 +427,9 @@ public class NetworkedShape : NetworkBehaviour
             return;
         }
         catForm = new Category();
-        catForm.name = catName;
-        catForm.color = GetCurrentFaceColor();
-        catForm.examples = new List<string>();
+        catForm.Name = catName;
+        catForm.CatColor = GetCurrentFaceColor();
+        catForm.Examples = new List<string>();
 
         // make cat examples out of pyramid ( really??? )
 
@@ -437,22 +437,22 @@ public class NetworkedShape : NetworkBehaviour
         {
             if(strIsOkForCat(catName, faceTexts[1].text))
             {
-                catForm.examples.Add(faceTexts[1].text);
+                catForm.Examples.Add(faceTexts[1].text);
                 
             }
             if(strIsOkForCat(catName, faceTexts[3].text))
             {
-                catForm.examples.Add(faceTexts[3].text);
+                catForm.Examples.Add(faceTexts[3].text);
                 
             }
             if(strIsOkForCat(catName, faceTexts[2].text))
             {
-                catForm.examples.Add(faceTexts[2].text);
+                catForm.Examples.Add(faceTexts[2].text);
                 
             }
             if(strIsOkForCat(catName, faceTexts[0].text))
             {
-                catForm.examples.Add(faceTexts[0].text);
+                catForm.Examples.Add(faceTexts[0].text);
                 
             }
             return;
@@ -464,7 +464,7 @@ public class NetworkedShape : NetworkBehaviour
         {
             if(strIsOkForCat(catName, t.text))
             {
-                catForm.examples.Add(t.text);
+                catForm.Examples.Add(t.text);
             }
         }
     }

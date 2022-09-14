@@ -6,7 +6,8 @@ using UnityEngine;
 [Serializable]
 public class Category
 {
-    public string name;
-    public SerializableColor color;
-    public List<string> examples;
+    public string Name;
+    public bool IsCorpus;
+    public SerializableColor CatColor;
+    public List<string> Examples;
 }

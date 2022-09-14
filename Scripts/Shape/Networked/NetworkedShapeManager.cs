@@ -334,7 +334,7 @@ public class NetworkedShapeManager : NetworkBehaviour
         var cat = lastSelectedShape.GetCatForm();
         catManager.AddCategory(cat);
         hasCatToGive = false;
-        Debug.LogFormat("Networked Shape Manager: tried adding cat {0} to shape {1}!", cat.name, lastSelectedShape.name);
+        Debug.LogFormat("Networked Shape Manager: tried adding cat {0} to shape {1}!", cat.Name, lastSelectedShape.name);
   
     }
 
@@ -342,7 +342,7 @@ public class NetworkedShapeManager : NetworkBehaviour
     {
         var cat = lastSelectedShape.GetCatForm();
         catManager.RemoveCategory(cat);
-        Debug.LogFormat("Networked Shape Manager: removed cat {0} from shape {1}!", cat.name, lastSelectedShape.name);
+        Debug.LogFormat("Networked Shape Manager: removed cat {0} from shape {1}!", cat.Name, lastSelectedShape.name);
     }
 
         

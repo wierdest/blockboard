@@ -14,8 +14,13 @@ public class CatButton : MonoBehaviour
 
     // long click removes category
     [SerializeField] private float clickDuration = 1.2f;
-    private bool isClicking, longClick;
+    private bool isClicking, longClick, isCorpus;
     private float clickDurationCount;
+
+    private void Awake()
+    {
+        isCorpus = gameObject.name.Equals("Corpus");
+    }
 
     private void Update()
     {
@@ -71,13 +76,15 @@ public class CatButton : MonoBehaviour
        
         Color currentColor;
         // make & add category
+        
         if(SceneManager.GetActiveScene().buildIndex == 0)
         {
-            offlineShapeManager.MakeLastSelectedShapeCatForm();
+            offlineShapeManager.MakeLastSelectedShapeCatForm(isCorpus);
             currentColor = (Color)offlineShapeManager.GetLastSelectedShapeColor();
         }
         else
         {
+            // TODO: REPLICATE CORPUS CATEGORY IN THE NETWORKED SHAPE MANAGER
             networkedShapeManager.MakeLastSelectedShapeCatForm();
             currentColor = (Color)networkedShapeManager.GetLastSelectedShapeColor();
         }

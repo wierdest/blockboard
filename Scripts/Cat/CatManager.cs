@@ -6,6 +6,7 @@ using UnityEngine;
 public class CatManager : MonoBehaviour
 {
     [SerializeField] private List<Category> cats;
+    [SerializeField] private List<Category> corpora;
     private int lastCatCount;
     // monitoring status
     [SerializeField] private TMPro.TMP_Text statusText;
@@ -30,32 +31,50 @@ public class CatManager : MonoBehaviour
         }
 
         // check if we already have a cat by that name
-        var sameCatIndex = cats.FindIndex(0, cats.Count, c => c.name.Equals(newCat.name));
+        var sameCatIndex = cats.FindIndex(0, cats.Count, c => c.Name.Equals(newCat.Name));
 
         // if that's the case, we automatically update its color and its examples.
         if(sameCatIndex >= 0)
         {
             Debug.Log("Cat Manager: I can't add the same cat name twice! However, I will update examples and color!");   
-            
+            var same = cats[sameCatIndex];
             // update examples
-            foreach(string example in newCat.examples)
+            foreach(string example in newCat.Examples)
             {
-                if(!cats[sameCatIndex].examples.Contains(example))
+                if(!same.Examples.Contains(example))
                 {
-                    cats[sameCatIndex].examples.Add(example);
+                    same.Examples.Add(example);
                 }
             }
 
             // update color
-            cats[sameCatIndex].color = newCat.color;
+            
+            same.CatColor = newCat.CatColor;
+
+            // update to corpus if that's the case,
+            if(!same.IsCorpus && newCat.IsCorpus)
+            {
+                corpora.Add(newCat);
+            }
             return;
 
         }
 
-        cats.Add(newCat);
+        if(newCat.IsCorpus)
+        {
+            Debug.Log("Added cat to corpora!");
+            corpora.Add(newCat);
+        }
+        else
+        {
+            Debug.Log("Added cat to cats!");
+            cats.Add(newCat);
+        }
+
+        
         updateStatusMonitor();
         lastCatCount++;
-        Debug.LogFormat("Cat Manager: added cat {0} exemplified by {1}", newCat.name, newCat.examples);
+        // Debug.LogFormat("Cat Manager: added cat {0} exemplified by {1}", newCat.Name, newCat.Examples);
         
     }
 
@@ -104,7 +123,7 @@ public class CatManager : MonoBehaviour
         {
             statusText.text = string.Format(
                 fullStatusTemplate,
-                cats[0].name,
+                cats[0].Name,
                 cats.Count + 1
             );
         }
@@ -116,7 +135,7 @@ public class CatManager : MonoBehaviour
                 statusText.text += string.Concat(
                     string.Format(
                         statusTemplate,
-                        cat.name
+                        cat.Name
                     )
                 ); 
             }

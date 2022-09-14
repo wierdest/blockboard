@@ -92,18 +92,18 @@ public class ColorCatMap : Printer
     
     private void printColoringMap()
     {
-        // takes the first category, 
+        // takes the last category, 
         // assuming it contains a list of sentences in the examples
         Category cat = CatManager.GetCats()[CatManager.GetCatsCount() - 1];
         coloringMapString = string.Concat(
             coloringMapString,
             string.Format(
                 ColorCatMapLiterals.ColoringMapHeader,
-                cat.name.ToUpperInvariant()
+                cat.Name.ToUpperInvariant()
             )
         );
 
-        foreach(string example in cat.examples)
+        foreach(string example in cat.Examples)
         {
             var split = example.Split(" ");
             var splitString = "";
@@ -145,7 +145,7 @@ public class ColorCatMap : Printer
         foreach(Category cat in CatManager.GetCats())
         {
             var mapItemExamplesString = "";
-            foreach(string example in cat.examples)
+            foreach(string example in cat.Examples)
             {
                 var str = string.Format(
                     ColorCatMapLiterals.CatItemExample,
@@ -159,8 +159,8 @@ public class ColorCatMap : Printer
 
             var mapItem = string.Format(
                 ColorCatMapLiterals.CatItem, 
-                ColorNameConverter.FindColor(cat.color),
-                cat.name.ToUpperInvariant(),
+                ColorNameConverter.FindColor(cat.CatColor),
+                cat.Name.ToUpperInvariant(),
                 mapItemExamplesString
             );
 
