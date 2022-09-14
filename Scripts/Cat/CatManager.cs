@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CatManager : MonoBehaviour
 {
-    [SerializeField] private List<Category> cats;
+    [SerializeField] private List<Category> regular;
     [SerializeField] private List<Category> corpora;
     private int lastCatCount;
     // monitoring status
@@ -17,7 +17,7 @@ public class CatManager : MonoBehaviour
     
     private void Awake()
     {
-        cats = new List<Category>();
+        regular = new List<Category>();
         maxStatusLength = statusText.text.Length;
         statusText.text = emptyStatus;
     }
@@ -31,13 +31,13 @@ public class CatManager : MonoBehaviour
         }
 
         // check if we already have a cat by that name
-        var sameCatIndex = cats.FindIndex(0, cats.Count, c => c.Name.Equals(newCat.Name));
+        var sameCatIndex = regular.FindIndex(0, regular.Count, c => c.Name.Equals(newCat.Name));
 
         // if that's the case, we automatically update its color and its examples.
         if(sameCatIndex >= 0)
         {
             Debug.Log("Cat Manager: I can't add the same cat name twice! However, I will update examples and color!");   
-            var same = cats[sameCatIndex];
+            var same = regular[sameCatIndex];
             // update examples
             foreach(string example in newCat.Examples)
             {
@@ -62,13 +62,15 @@ public class CatManager : MonoBehaviour
 
         if(newCat.IsCorpus)
         {
+            // if it's a corpus cat, we add to the corpora list
             Debug.Log("Added cat to corpora!");
             corpora.Add(newCat);
         }
         else
         {
+            // iof it's a regular cat we add to the regular list
             Debug.Log("Added cat to cats!");
-            cats.Add(newCat);
+            regular.Add(newCat);
         }
 
         
@@ -86,34 +88,34 @@ public class CatManager : MonoBehaviour
             return;
         }
 
-        if(cats.RemoveAll(c => c.Equals(cat)) != 0)
+        if(regular.RemoveAll(c => c.Equals(cat)) != 0)
         {
-            Debug.LogFormat("Cat Manager: removed a cat! we used to have {0} cat, now there's {1}!", lastCatCount, cats.Count);
+            Debug.LogFormat("Cat Manager: removed a cat! we used to have {0} cat, now there's {1}!", lastCatCount, regular.Count);
             updateStatusMonitor();
         }
-        lastCatCount = cats.Count;
+        lastCatCount = regular.Count;
         
     }
 
     public void ClearCats()
     {
-        cats.Clear();
+        regular.Clear();
         updateStatusMonitor();
     }
 
     public int GetCatsCount()
     {
-        return cats.Count;
+        return regular.Count;
     }
 
     public List<Category> GetCats()
     {
-        return cats;
+        return regular;
     }
 
     private void updateStatusMonitor()
     {
-        if(cats.Count == 0)
+        if(regular.Count == 0)
         {
             statusText.text = emptyStatus;
             return;
@@ -123,14 +125,14 @@ public class CatManager : MonoBehaviour
         {
             statusText.text = string.Format(
                 fullStatusTemplate,
-                cats[0].Name,
-                cats.Count + 1
+                regular[0].Name,
+                regular.Count + 1
             );
         }
         else
         {
             statusText.text = "to print: ";
-            foreach(Category cat in cats)
+            foreach(Category cat in regular)
             {
                 statusText.text += string.Concat(
                     string.Format(
