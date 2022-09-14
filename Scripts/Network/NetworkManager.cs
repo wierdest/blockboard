@@ -85,11 +85,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             Scene = SceneManager.GetActiveScene().buildIndex,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
-
         
-
-        
-
         if(result.Ok)
         {
             // all good
