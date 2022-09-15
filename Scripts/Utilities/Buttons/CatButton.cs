@@ -26,10 +26,10 @@ public class CatButton : MonoBehaviour
     {
         checkClick();
 
-        if(image.color != colorPicker.Color)
-        {
-            image.color = (Color32)colorPicker.Color;
-        }
+        // if(image.color != colorPicker.Color)
+        // {
+        //     image.color = (Color32)colorPicker.Color;
+        // }
         
     }
     public void SetNetworkedShapeManager(NetworkedShapeManager manager)
@@ -92,6 +92,7 @@ public class CatButton : MonoBehaviour
         if(currentColor != null)
         {
             colorPicker.Color = currentColor;
+            image.color = currentColor;
         }
         
     }
