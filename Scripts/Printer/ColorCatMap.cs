@@ -67,7 +67,7 @@ public class ColorCatMap : Printer
         categoryMapString = "";
         coloringMapString = "";
 
-        if(CatManager.GetCatsCount() > 0)
+        if(CatManager.GetRegularCatsCount() > 0 && CatManager.GetCorporaCatsCount() > 0)
         {
             Debug.Log(ColorCatMapLiterals.PrintCategoryAndColoringMapMessage);
             printCategoryMap();
@@ -94,44 +94,46 @@ public class ColorCatMap : Printer
     {
         // takes the last category, 
         // assuming it contains a list of sentences in the examples
-        Category cat = CatManager.GetCats()[CatManager.GetCatsCount() - 1];
-        coloringMapString = string.Concat(
-            coloringMapString,
-            string.Format(
-                ColorCatMapLiterals.ColoringMapHeader,
-                cat.Name.ToUpperInvariant()
-            )
-        );
 
-        foreach(string example in cat.Examples)
+        foreach(Category cat in CatManager.GetCorporaCats())
         {
-            var split = example.Split(" ");
-            var splitString = "";
-            foreach(string word in split)
-            {
-                var wordMapItemToColor = string.Format(
-                    ColorCatMapLiterals.ContentBlockItem,
-                    word
-                );
-
-                if(PrinterLiterals.LineBreaks.Contains(word.Last<char>()))
-                {
-                    wordMapItemToColor = string.Concat(wordMapItemToColor, "\n\n");
-                }
-
-                splitString = string.Concat(
-                    splitString,
-                    wordMapItemToColor
-                );
-
-            }
-
             coloringMapString = string.Concat(
                 coloringMapString,
-                splitString
+                string.Format(
+                    ColorCatMapLiterals.ColoringMapHeader,
+                    cat.Name.ToUpperInvariant()
+                ),
+                "\n"
             );
 
+            foreach(string example in cat.Examples)
+            {
+                var split = example.Split(" ");
+                var splitString = "";
+                foreach(string word in split)
+                {
+                    var wordMapItemToColor = string.Format(
+                        ColorCatMapLiterals.ContentBlockItem,
+                        word
+                    );
 
+                    if(PrinterLiterals.LineBreaks.Contains(word.Last<char>()))
+                    {
+                        wordMapItemToColor = string.Concat(wordMapItemToColor, "\n\n");
+                    }
+
+                    splitString = string.Concat(
+                        splitString,
+                        wordMapItemToColor
+                    );
+
+                }
+
+                coloringMapString = string.Concat(
+                    coloringMapString,
+                    splitString
+                );
+            }
         }
     }
 
@@ -142,7 +144,7 @@ public class ColorCatMap : Printer
             ColorCatMapLiterals.ColorCatMapHeader
         );
 
-        foreach(Category cat in CatManager.GetCats())
+        foreach(Category cat in CatManager.GetRegularCats())
         {
             var mapItemExamplesString = "";
             foreach(string example in cat.Examples)

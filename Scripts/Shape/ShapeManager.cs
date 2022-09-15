@@ -422,7 +422,7 @@ public class ShapeManager : MonoBehaviour
             return;
         }
         catManager.RemoveCategory(cat);
-        Debug.LogFormat("Shape Manager: removed cat {0} from shape {1}!", cat.Name, lastSelectedShape.name);
+        // Debug.LogFormat("Shape Manager: removed cat {0} from shape {1}!", cat.Name, lastSelectedShape.name);
     }
 
 

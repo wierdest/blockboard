@@ -7,19 +7,14 @@ public class CatManager : MonoBehaviour
 {
     [SerializeField] private List<Category> regular;
     [SerializeField] private List<Category> corpora;
-    private int lastCatCount;
-    // monitoring status
-    [SerializeField] private TMPro.TMP_Text statusText;
-    private readonly string emptyStatus = "nothing to print yet!";
-    private readonly string statusTemplate = "{0}; ";
-    private readonly string fullStatusTemplate = "to print: {0} and {1} more!";
-    private int maxStatusLength;
+    private int lastRegularCatCount, lastCorporaCount;
+    // cat status monitor
+    [SerializeField] private TMPro.TMP_Text regularCount, corporaCount;
     
     private void Awake()
     {
         regular = new List<Category>();
-        maxStatusLength = statusText.text.Length;
-        statusText.text = emptyStatus;
+        corpora = new List<Category>();
     }
 
     public void AddCategory(Category newCat)
@@ -48,16 +43,15 @@ public class CatManager : MonoBehaviour
             }
 
             // update color
-            
             same.CatColor = newCat.CatColor;
 
-            // update to corpus if that's the case,
-            if(!same.IsCorpus && newCat.IsCorpus)
-            {
-                corpora.Add(newCat);
-            }
+            // send a regular to corpus if that's the case,
+            /// IS THIS REALLY DESIRABLE?
+            // if(!same.IsCorpus && newCat.IsCorpus)
+            // {
+            //     corpora.Add(newCat);
+            // }
             return;
-
         }
 
         if(newCat.IsCorpus)
@@ -65,17 +59,17 @@ public class CatManager : MonoBehaviour
             // if it's a corpus cat, we add to the corpora list
             Debug.Log("Added cat to corpora!");
             corpora.Add(newCat);
+            lastCorporaCount++;
         }
         else
         {
             // iof it's a regular cat we add to the regular list
-            Debug.Log("Added cat to cats!");
+            Debug.Log("Added cat to regular!");
             regular.Add(newCat);
+            lastRegularCatCount++;
         }
-
-        
         updateStatusMonitor();
-        lastCatCount++;
+        
         // Debug.LogFormat("Cat Manager: added cat {0} exemplified by {1}", newCat.Name, newCat.Examples);
         
     }
@@ -88,64 +82,54 @@ public class CatManager : MonoBehaviour
             return;
         }
 
+        if(cat.IsCorpus)
+        {
+            if(corpora.RemoveAll(c => cat.Equals(cat)) != 0)
+            {
+                Debug.LogFormat("Cat Manager: removed a corpus cat! we used to have {0} corpora cat, now there's {1}!", lastCorporaCount, corpora.Count);
+                lastCorporaCount = corpora.Count;
+            }
+        }
+       
         if(regular.RemoveAll(c => c.Equals(cat)) != 0)
         {
-            Debug.LogFormat("Cat Manager: removed a cat! we used to have {0} cat, now there's {1}!", lastCatCount, regular.Count);
-            updateStatusMonitor();
+            Debug.LogFormat("Cat Manager: removed a regular cat! we used to have {0} regular cat, now there's {1}!", lastRegularCatCount, regular.Count);
+            lastRegularCatCount = regular.Count;
         }
-        lastCatCount = regular.Count;
-        
+        updateStatusMonitor();
     }
 
     public void ClearCats()
     {
         regular.Clear();
+        corpora.Clear();
         updateStatusMonitor();
     }
 
-    public int GetCatsCount()
+    public int GetRegularCatsCount()
     {
         return regular.Count;
     }
 
-    public List<Category> GetCats()
+    public int GetCorporaCatsCount()
+    {
+        return corpora.Count;
+    }
+
+    public List<Category> GetRegularCats()
     {
         return regular;
     }
 
-    private void updateStatusMonitor()
+    public List<Category> GetCorporaCats()
     {
-        if(regular.Count == 0)
-        {
-            statusText.text = emptyStatus;
-            return;
-        }
-
-        if(statusText.text.Length >= maxStatusLength)
-        {
-            statusText.text = string.Format(
-                fullStatusTemplate,
-                regular[0].Name,
-                regular.Count + 1
-            );
-        }
-        else
-        {
-            statusText.text = "to print: ";
-            foreach(Category cat in regular)
-            {
-                statusText.text += string.Concat(
-                    string.Format(
-                        statusTemplate,
-                        cat.Name
-                    )
-                ); 
-            }
-            
-        }
+        return corpora;
     }
 
-   
-
+    private void updateStatusMonitor()
+    {
+        regularCount.text = lastRegularCatCount.ToString();
+        corporaCount.text = lastCorporaCount.ToString();
+    }
 }
   

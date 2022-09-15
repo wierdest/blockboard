@@ -82,7 +82,7 @@ public class ChooseCatMap : Printer
         categoryMapString = "";
         choosingMapString = "";
 
-        if(CatManager.GetCatsCount() > 0)
+        if(CatManager.GetRegularCatsCount() > 0 && CatManager.GetCorporaCatsCount() > 0)
         {
             Debug.Log(ChooseCatMapLiterals.PrintChooseCatMapMessage);
             printCategoryMap();
@@ -111,7 +111,7 @@ public class ChooseCatMap : Printer
             ChooseCatMapLiterals.ChooseCatMapHeader
         );
 
-        foreach(Category cat in CatManager.GetCats())
+        foreach(Category cat in CatManager.GetRegularCats())
         {
             var mapItemExamplesString = "";
 
@@ -127,6 +127,7 @@ public class ChooseCatMap : Printer
                     itemExample
                 );
             }
+            
             var mapItem = string.Format(
                 ChooseCatMapLiterals.NoColorCatItem,
                 cat.Name.ToUpperInvariant(),
@@ -143,83 +144,74 @@ public class ChooseCatMap : Printer
 
     private void printChoosingMap()
     {
-        // takes the last category, 
-        // assuming it contains a list of sentences in the examples
-        Category cat = CatManager.GetCats()[CatManager.GetCatsCount() - 1]; // todo: make this not hard-coded
-
-        choosingMapString = string.Concat(
-            choosingMapString,
-            string.Format(
-                ChooseCatMapLiterals.ChoosingMapHeader,
-                cat.Name.ToUpperInvariant()
-            )
-        );
-        
-        foreach(string example in cat.Examples)
+        foreach(Category cat in CatManager.GetCorporaCats())
         {
-            var split  = example.Split(" ");
-            foreach(string block in split)
+            choosingMapString = string.Concat(
+                choosingMapString,
+                string.Format(
+                    ChooseCatMapLiterals.ChoosingMapHeader,
+                    cat.Name.ToUpperInvariant()
+                )
+            );
+
+            foreach(string example in cat.Examples)
             {
-                string blockString = "";
-                IEnumerable<Category> testArray = CatManager.GetCats().Where(c => c.Examples.Contains<string>(block));
-                if(testArray.Count() != 0)
+                var split  = example.Split(" ");
+                foreach(string block in split)
                 {
-                    // if the word in the example is a category
-                    Category catToChoose = testArray.First(); // we take the first we find
-                    // get the options we have to choose from
-                    List<string> optionsToChoose = catToChoose.Examples;
-                    // randomly shuffles them
-                    optionsToChoose.Shuffle();
-                    string optionString = "";
-                    foreach(string option in optionsToChoose)
+                    string blockString = "";
+                    IEnumerable<Category> testArray = CatManager.GetRegularCats().Where(c => c.Examples.Contains<string>(block));
+                    if(testArray.Count() != 0)
                     {
-                        optionString = string.Concat(
-                            optionString,
-                            string.Format(
-                                ChooseCatMapLiterals.ContentBlockItemChoice,
-                                option
-                            )
+                        // if the word in the example is a category
+                        Category catToChoose = testArray.First(); // we take the first we find
+                        // get the options we have to choose from
+                        List<string> optionsToChoose = catToChoose.Examples;
+                        // randomly shuffles them
+                        optionsToChoose.Shuffle();
+                        string optionString = "";
+                        foreach(string option in optionsToChoose)
+                        {
+                            optionString = string.Concat(
+                                optionString,
+                                string.Format(
+                                    ChooseCatMapLiterals.ContentBlockItemChoice,
+                                    option
+                                )
+                            );
+                        }
+
+                        blockString = string.Format(
+                            ChooseCatMapLiterals.ChooseContentBlockItem,
+                            optionString
+                        );
+                    }
+                    else
+                    {
+                        // normal word
+                        blockString = string.Format(
+                            ChooseCatMapLiterals.NormalBlockItem,
+                            block
                         );
                     }
 
-                    blockString = string.Format(
-                        ChooseCatMapLiterals.ChooseContentBlockItem,
-                        optionString
+                    // this will come up sometime: the category
+
+                    if(PrinterLiterals.LineBreaks.Contains(block.Last<char>()))
+                    {
+                        blockString = string.Concat(
+                            blockString,
+                            "\n\n"
+                        );
+                    }
+                    
+                    choosingMapString = string.Concat(
+                        choosingMapString,
+                        blockString
                     );
                 }
-                else
-                {
-                    // normal word
-                    blockString = string.Format(
-                        ChooseCatMapLiterals.NormalBlockItem,
-                        block
-                    );
-                }
-
-                // this will come up sometime: the category
-
-                if(PrinterLiterals.LineBreaks.Contains(block.Last<char>()))
-                {
-                    blockString = string.Concat(
-                        blockString,
-                        "\n\n"
-                    );
-                }
-                
-                choosingMapString = string.Concat(
-                    choosingMapString,
-                    blockString
-                );
-
-
             }
-
         }
-
-        
-
-
-        
     }
 
 
