@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.50598186, g: 0.5543043, b: 0.58021766, a: 1}
+  m_IndirectSpecularColor: {r: 0.505853, g: 0.55425084, b: 0.58017397, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -755,6 +755,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 491655911663275341, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 484921828}
+    - target: {fileID: 491655911663275341, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnClickOneButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 491655911663275341, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShapeManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 496496297122434207, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1092,6 +1104,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2128559628729601297, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2128559628729601297, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2128559628729601297, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 484921828}
@@ -1279,6 +1299,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4814480558879924353, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 484921828}
     - target: {fileID: 5020315376349782863, guid: 3d5632e72eb2a71a5815bb276b1f8bbd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

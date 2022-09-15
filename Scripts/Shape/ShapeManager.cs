@@ -100,10 +100,11 @@ public class ShapeManager : MonoBehaviour
     // this here shape manager's job is to make user interface elements interact with the shapes, so
 
     // the first step is to connect the text InputField
+
     #region TEXT
-    public void OnTextInputValueChange()
+    public void OnClickOneButton()
     {
-        
+        // sends text to selected shapes
         string value = inputField.text;
 
         if(string.IsNullOrEmpty(value))
@@ -113,28 +114,15 @@ public class ShapeManager : MonoBehaviour
 
         if(!lastSelectedShape)
         {
-            
-            // var nonPieces = shapes.Where(s => s.IsPiece);
-            // if(nonPieces.Count() > 0)
-            // {
-            //     return;
-            // }
-
-            // foreach(Shape s in shapes)
-            // {
-            //     s.Write(value);
-            // }
-            // return;
-
             return;
         }
+        lastSelectedShape.FinishUpWriting(value);
 
-        lastSelectedShape.Write(value);
 
     }
-
-    public void OnTextInputEndEdit()
+    public void OnClickAllButton()
     {
+        // sends text to all non-split non-piece shapes
         string value = inputField.text;
 
         if(string.IsNullOrEmpty(value))
@@ -142,18 +130,16 @@ public class ShapeManager : MonoBehaviour
             return;
         }
 
-        if(!lastSelectedShape)
-        {           
-            foreach(Shape s in shapes.Where(s => !s.IsPiece))
+        foreach(Shape s in shapes)
+        {
+            if(!s.IsPiece && !s.IsSplit)
             {
                 s.FinishUpWriting(value);
             }
-            return;
         }
-        
-        lastSelectedShape.FinishUpWriting(value);
-    }
 
+    }
+    
     #endregion
 
     // the second step is to connect the color picker
