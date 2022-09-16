@@ -7,8 +7,6 @@ using UnityEngine;
 public static class ChooseCatMapLiterals
 {
     public static string Instructions = 
-
-    "Add Target Content after exposition.\n" +  
     "Make sure content contains unambiguous category examples.\n" + 
     "By default, the program scrambles category order when choosing.\n";
     public static string TargetContent = "A few sentences or short paragraph.\n";
@@ -23,7 +21,7 @@ public static class ChooseCatMapLiterals
 
     
 }
-public class ChooseCatMap : Printer
+public class ChooseCatMapString : Printer
 {
     private string fullStringToPrint, categoryMapString, choosingMapString;
 

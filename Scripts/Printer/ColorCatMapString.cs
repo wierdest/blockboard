@@ -6,8 +6,6 @@ using UnityEngine;
 public static class ColorCatMapLiterals
 {
     public static string Instructions = 
-    
-    "Add Target Content after exposition.\n" +  
     "It is worth exploring as many categories as the group can handle.\n" + 
     "Build mnemonic bridge between Color and Category.\n";
     public static string TargetContent = "A few sentences or short paragraph\n";
@@ -21,7 +19,7 @@ public static class ColorCatMapLiterals
   
 }
 
-public class ColorCatMap : Printer
+public class ColorCatMapString : Printer
 {
     private string fullStringToPrint, categoryMapString, coloringMapString;
 
